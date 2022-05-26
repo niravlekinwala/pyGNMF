@@ -6,9 +6,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name="pyGNMF",
     version="1.0.0",
-    author="Nirav Lekinwala, Mani Bhushan",
+    author=["Nirav Lekinwala","Mani Bhushan"],
     author_email="nirav.lekinwala@gmail.com",
-    description="Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Apporaches.",
+    description="Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pypa/sampleproject",
