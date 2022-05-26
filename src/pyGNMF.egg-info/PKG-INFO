@@ -5,9 +5,7 @@ Summary: Python implementation of Generalised Non-negative Matrix Factorisation 
 Home-page: https://github.com/pypa/sampleproject
 Author: Nirav Lekinwala, Mani Bhushan
 Author-email: nirav.lekinwala@gmail.com
-License: UNKNOWN
 Project-URL: Bug Tracker, https://github.com/pypa/sampleproject/issues
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
@@ -22,5 +20,3 @@ License-File: LICENSE
 This Python library implements GNMF method introduced in article titled "Generalised Non-Negative Matrix Factorisation for Air Pollution Source Apportionment" published in the Science of Total Environment Journal.
 
 Following are the details of the code.
-
-

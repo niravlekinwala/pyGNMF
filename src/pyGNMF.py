@@ -67,12 +67,12 @@ class internal_functions:
             return is_pos_def_key
 
         elif np.sum(np.linalg.eigh(mat)[0] > 0) == size_1:
-            print ("The covariance Matrix is Positive Semi-Definite")
+            print ("The covariance Matrix is Positive Definite")
             is_pos_def_key = 1
             return is_pos_def_key
 
         else:
-            print("The covariance Matrix is NOT Positive Semi-Definite")
+            print("The covariance Matrix is NOT Positive Definite")
             return is_pos_def_key
         
 class covariance_matrix_handling:
@@ -116,7 +116,7 @@ class covariance_matrix_handling:
         check_positive_Definite = internal_functions.is_pos_def(covariance)
         #print(check_positive_Definite)
         if check_positive_Definite==0:
-            raise Exception("covariance Matrix is not Positive Semi-Definite")
+            raise Exception("covariance Matrix is not Positive Definite")
 
         if option == 'row_stacked':
             # Row Stacked covariance Matrix -- Update of G
@@ -1245,6 +1245,5 @@ class nmf_multupd:
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
-            #delta = delta
 
-        return G_mat, F_mat, obj_func, delta
+        return G_mat, F_mat, obj_func
