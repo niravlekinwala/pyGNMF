@@ -9,16 +9,17 @@ covariance = data['covariance']
 G_init = data['g_init']
 F_init = data['f_init']
 
-GMat, FMat, OFunc = gmult.running_method(
+
+GMat, FMat, OFunc = gproj.running_method(
     X_matrix,
     covariance,
     G_init = G_init,
     F_init = F_init,
     option='row_stacked',
     num_factors=7,
-    num_init=1,
-    max_iter=50,
-    tolerance=0.2,
+    num_init=10,
+    max_iter=1000,
+    tolerance=1e-6,
     convergence_type='relative',
     convergence_number=10,
 )

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyGNMF
-Version: 1.0.0
+Version: 1.0.1
 Summary: Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.
 Home-page: https://github.com/pypa/sampleproject
 Author: ['Nirav Lekinwala', 'Mani Bhushan']

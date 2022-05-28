@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.linglg as la
+import scipy.linalg as la
 import warnings
 warnings.filterwarnings("error")
 from tqdm import tqdm
@@ -12,8 +12,8 @@ class internal_functions:
     """This is a class for some miscellaneous functions like 3D-Transpose and to check if the matrix is Positive Definiteness.
     """
 
-    def __init__(self, mat):
-        self.mat = mat
+    # def __init__(self, mat):
+    #     self.mat = mat
 
     def transpose_3d(mat):
         """This function returns transpose of a 3D Matrix.
@@ -63,31 +63,85 @@ class internal_functions:
         size_1, size_2 = mat.shape
         is_pos_def_key = 0
         if size_1 != size_2:
-            raise Exception("The input matrix is not square")
+            raise Exception("C1: The input matrix is not square")
 
         elif np.sum(mat.T - mat) > 1e-1:
-            print("The covariance Matrix is NOT Symmetric.")
+            print("C2: The covariance Matrix is NOT Symmetric.")
             return is_pos_def_key
 
         elif np.sum(np.linalg.eigh(mat)[0] > 0) == size_1:
-            print ("The covariance Matrix is Positive Definite")
+            print ("C3: The covariance Matrix is Positive Definite")
             is_pos_def_key = 1
             return is_pos_def_key
 
         else:
-            print("The covariance Matrix is NOT Positive Definite")
+            print("C4: The covariance Matrix is NOT Positive Definite")
             return is_pos_def_key
+
+
+    def checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init):
+        """_summary_
+
+        Parameters
+        ----------
+        G_init : ndarray or str
+            Size -> n `x` k
+            Initial value for G Matrix.
+        F_init : ndarray or str
+            Size -> k `x` m
+            Initial value for F Matrix.
+        num_init : int
+            Number of initialisations for a dataset under consideration.
+
+        Raises
+        ------
+        Exception
+            _description_
+        Exception
+            _description_
+        Exception
+            _description_
+        ValueError
+            _description_
+
+        Returns
+        -------
+        G_init : ndarray or str
+            Size -> n `x` k
+            Initial value for G Matrix.
+        F_init : ndarray or str
+            Size -> k `x` m
+            Initial value for F Matrix.
+        """
         
+        if type(G_init) == str and type(F_init) == str:
+             ## Initial guesses need to be randomly generated.
+            print("{} option is selected for both G_init and F_init. Generating initial guesses randomly".format(G_init.upper()))
+            G_init = np.random.rand(num_init, n_samples, k_factors)
+            F_init = np.random.rand(num_init, k_factors, m_species)
+        else:
+            ## CHECKING FOR NEGATIVE VALUES
+            if np.sum(G_init < 0) != 0 and np.sum(F_init < 0) != 0: 
+                raise ValueError("There are negative values in initial guess. Make sure to initialise with positive values.")
+            
+            if num_init == 1 and len(G_init.shape) != 3 and len(F_init.shape) != 3:
+                G_init = G_init.reshape(num_init, n_samples, k_factors)
+                F_init = F_init.reshape(num_init, k_factors, m_species)
+            elif num_init >= 2 and len(G_init.shape) == 3 and len(F_init.shape) == 3 and G_init.shape[0]!=num_init and F_init.shape[0]!=num_init:
+                raise ValueError("Make sure that the size of initial guesses for G and F is {}x{}x{} and {}x{}x{} respectively.".format(num_init, n_samples, k_factors, num_init, k_factors, m_species))
+            
+        return G_init, F_init
+
 class covariance_matrix_handling:
     """This class deals with the different aspects of handling the covariance matrix
     """
-    def __init__(self, covariance, X_matrix, option):
-        self.covariance = covariance
-        self.X_matrix = X_matrix
-        self.n_samples, self.m_species = X_matrix.shape
-        self.option = option
-        # self.CovarianceColumnInverse_F_upd = np.zeros(covariance.shape)
-        # self.CovarianceRowInverse_G_upd = np.zeros(covariance.shape)
+    # def __init__(self, covariance, X_matrix, option):
+    #     self.covariance = covariance
+    #     self.X_matrix = X_matrix
+    #     self.n_samples, self.m_species = X_matrix.shape
+    #     self.option = option
+    #     # self.CovarianceColumnInverse_F_upd = np.zeros(covariance.shape)
+    #     # self.CovarianceRowInverse_G_upd = np.zeros(covariance.shape)
 
     def restructure_covariance_inverse(covariance, n_samples, m_species, option):
         """The function is used to restructure the covariance Matrix
@@ -561,29 +615,7 @@ class gnmf_projgrad_with_cov:
 
         n_samples, m_species = X_matrix.shape
         k_factors = num_factors
-
-        ## Checking inputs -- Initial Guesses
-        if type(G_init) != np.ndarray:
-            ## Generate the initial guess internally
-            if num_factors == None:
-                raise Exception("Provide the number of Factors")
-            else:
-                G_init = np.random.rand(num_init, n_samples, k_factors)
-                F_init = np.random.rand(num_init, k_factors, m_species)
-        elif num_init!=1:
-            if num_init == G_init.shape[0]:
-                print("")
-            else:
-                raise Exception("Provide initial guess for all {} initialisations".format(num_init))
-        else:
-            if len(G_init.shape) != 3:
-                G_init = G_init.reshape(num_init, G_init.shape[0], G_init.shape[1])
-                F_init = F_init.reshape(num_init, F_init.shape[0], F_init.shape[1])
-            k_fact_g = G_init.shape[2]
-            k_fact_f = F_init.shape[1]
-            if (k_fact_g != k_factors) and (k_fact_f != k_factors):
-                raise Exception("The size of initial guesses for G and F do not conform with the number of factors provided\nNumber of Factors provided: {}\nNumber of Factors from G matrix: {}\nNumber of Factors from F Matrix: {}".format(k_factors, k_fact_g, k_fact_f))
-
+        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init)
 
         ## Checking inputs -- Convergence
         if convergence_type == 'relative':
@@ -665,7 +697,8 @@ class gnmf_projgrad_with_cov:
                 F_run, G_run = F_upd, G_upd
                 pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
-
+            
+            tqdm.close(pbar)
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
@@ -949,28 +982,6 @@ class gnmf_multupd_with_cov:
         n_samples, m_species = X_matrix.shape
         k_factors = num_factors
 
-        ## Checking inputs -- Initial Guesses
-        if type(G_init) != np.ndarray:
-            ## Generate the initial guess internally
-            if num_factors == None:
-                raise Exception("Provide the number of Factors")
-            else:
-                G_init = np.random.rand(num_init, n_samples, k_factors)
-                F_init = np.random.rand(num_init, k_factors, m_species)
-        elif num_init!=1:
-            if num_init == G_init.shape[0]:
-                print("")
-            else:
-                raise Exception("Provide initial guess for all {} initialisations".format(num_init))
-        else:
-            if len(G_init.shape) != 3:
-                G_init = G_init.reshape(num_init, G_init.shape[0], G_init.shape[1])
-                F_init = F_init.reshape(num_init, F_init.shape[0], F_init.shape[1])
-            k_fact_g = G_init.shape[2]
-            k_fact_f = F_init.shape[1]
-            if (k_fact_g != k_factors) and (k_fact_f != k_factors):
-                raise Exception("The size of initial guesses for G and F do not conform with the number of factors provided\nNumber of Factors provided: {}\nNumber of Factors from G matrix: {}\nNumber of Factors from F Matrix: {}".format(k_factors, k_fact_g, k_fact_f))
-
         ## Checking inputs -- Convergence
         if convergence_type == 'relative':
             def convergence_checking(OFunc_km1, OFunc_k):
@@ -1055,7 +1066,8 @@ class gnmf_multupd_with_cov:
                 F_run, G_run = F_upd, G_upd
                 pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
-
+ 
+            tqdm.close(pbar)
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
@@ -1171,28 +1183,7 @@ class nmf_multupd:
         print(tolerance)
         n_samples, m_species = X_matrix.shape
         k_factors = num_factors
-
-        ## Checking inputs -- Initial Guesses
-        if type(G_init) != np.ndarray:
-            ## Generate the initial guess internally
-            if num_factors == None:
-                raise Exception("Provide the number of Factors")
-            else:
-                G_init = np.random.rand(num_init, n_samples, k_factors)
-                F_init = np.random.rand(num_init, k_factors, m_species)
-        elif num_init!=1:
-            if num_init == G_init.shape[0]:
-                print("")
-            else:
-                raise Exception("Provide initial guess for all {} initialisations".format(num_init))
-        else:
-            if len(G_init.shape) != 3:
-                G_init = G_init.reshape(num_init, G_init.shape[0], G_init.shape[1])
-                F_init = F_init.reshape(num_init, F_init.shape[0], F_init.shape[1])
-            k_fact_g = G_init.shape[2]
-            k_fact_f = F_init.shape[1]
-            if (k_fact_g != k_factors) and (k_fact_f != k_factors):
-                raise Exception("The size of initial guesses for G and F do not conform with the number of factors provided\nNumber of Factors provided: {}\nNumber of Factors from G matrix: {}\nNumber of Factors from F Matrix: {}".format(k_factors, k_fact_g, k_fact_f))
+        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init)
 
         ## Checking inputs -- Convergence
         if convergence_type == 'relative':
