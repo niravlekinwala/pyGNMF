@@ -12,9 +12,6 @@ class internal_functions:
     """This is a class for some miscellaneous functions like 3D-Transpose and to check if the matrix is Positive Definiteness.
     """
 
-    # def __init__(self, mat):
-    #     self.mat = mat
-
     def transpose_3d(mat):
         """This function returns transpose of a 3D Matrix.
 
@@ -79,7 +76,7 @@ class internal_functions:
             return is_pos_def_key
 
 
-    def checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init):
+    def checking_initial_guess(G_init, F_init, n_numrows, m_numcols, p_numfact, num_init):
         """_summary_
 
         Parameters
@@ -90,19 +87,12 @@ class internal_functions:
         F_init : ndarray or str
             Size -> k `x` m
             Initial value for F Matrix.
+        n_numrows : int
+            Number of rows in the X matrix.
+        m_numcols : int
+            Number of columns in the X matrix.
         num_init : int
             Number of initialisations for a dataset under consideration.
-
-        Raises
-        ------
-        Exception
-            _description_
-        Exception
-            _description_
-        Exception
-            _description_
-        ValueError
-            _description_
 
         Returns
         -------
@@ -114,36 +104,29 @@ class internal_functions:
             Initial value for F Matrix.
         """
         
-        if type(G_init) == str and type(F_init) == str:
+        if type(G_init) == str and type(F_init) == str and G_init.upper() == "RANDOM" and F_init.upper() == "RANDOM":
              ## Initial guesses need to be randomly generated.
             print("{} option is selected for both G_init and F_init. Generating initial guesses randomly".format(G_init.upper()))
-            G_init = np.random.rand(num_init, n_samples, k_factors)
-            F_init = np.random.rand(num_init, k_factors, m_species)
+            G_init = np.random.rand(num_init, n_numrows, p_numfact)
+            F_init = np.random.rand(num_init, p_numfact, m_numcols)
         else:
             ## CHECKING FOR NEGATIVE VALUES
             if np.sum(G_init < 0) != 0 and np.sum(F_init < 0) != 0: 
                 raise ValueError("There are negative values in initial guess. Make sure to initialise with positive values.")
             
             if num_init == 1 and len(G_init.shape) != 3 and len(F_init.shape) != 3:
-                G_init = G_init.reshape(num_init, n_samples, k_factors)
-                F_init = F_init.reshape(num_init, k_factors, m_species)
+                G_init = G_init.reshape(num_init, n_numrows, p_numfact)
+                F_init = F_init.reshape(num_init, p_numfact, m_numcols)
             elif num_init >= 2 and len(G_init.shape) == 3 and len(F_init.shape) == 3 and G_init.shape[0]!=num_init and F_init.shape[0]!=num_init:
-                raise ValueError("Make sure that the size of initial guesses for G and F is {}x{}x{} and {}x{}x{} respectively.".format(num_init, n_samples, k_factors, num_init, k_factors, m_species))
+                raise ValueError("Make sure that the size of initial guesses for G and F is sizes {} x {} x {} and {} x {} x {} respectively.".format(num_init, n_numrows, p_numfact, num_init, p_numfact, m_numcols))
             
         return G_init, F_init
 
 class covariance_matrix_handling:
     """This class deals with the different aspects of handling the covariance matrix
     """
-    # def __init__(self, covariance, X_matrix, option):
-    #     self.covariance = covariance
-    #     self.X_matrix = X_matrix
-    #     self.n_samples, self.m_species = X_matrix.shape
-    #     self.option = option
-    #     # self.CovarianceColumnInverse_F_upd = np.zeros(covariance.shape)
-    #     # self.CovarianceRowInverse_G_upd = np.zeros(covariance.shape)
 
-    def restructure_covariance_inverse(covariance, n_samples, m_species, option):
+    def restructure_covariance_inverse(covariance, n_numrows, m_numcols, option):
         """The function is used to restructure the covariance Matrix
         differently for the update of `G` and `F` Matrices.
 
@@ -153,10 +136,10 @@ class covariance_matrix_handling:
             Size -> nm`x`nm\n
             The original covariance Matrix. Python flattens the `X` matrix by
             order 'C', i.e., Row elements are stacked one below another.
-        n_samples : float
-            Number of Samples.
-        m_species : float
-            Number of Species.
+        n_numrows : float
+            Number of numrows.
+        m_numcols : float
+            Number of numcols.
         option : ('row_stacked', 'column_stacked')
             Option to specify if the covariance matrix is obtained by 
             row-stacking or column stacking the elements of the data matrix (X_matrix)
@@ -170,8 +153,9 @@ class covariance_matrix_handling:
             Size -> nm`x`nm\n
             covariance matrix structured for the update of `G`.
         """
+
         check_positive_Definite = internal_functions.is_pos_def(covariance)
-        #print(check_positive_Definite)
+        
         if check_positive_Definite==0:
             raise Exception("Covariance Matrix is not Positive Definite")
 
@@ -183,8 +167,8 @@ class covariance_matrix_handling:
             # Column Stacking covariance Matrix -- Update of F
             covariance_column = np.zeros(covariance_row.shape)
             indI = np.empty(0, dtype='int')
-            for l in range(m_species):
-                indI = np.append(indI, np.arange(0+l, (n_samples*m_species)+l, m_species))
+            for l in range(m_numcols):
+                indI = np.append(indI, np.arange(0+l, (n_numrows*m_numcols)+l, m_numcols))
             
             indJ = indI
             for a, i in enumerate(indI):
@@ -198,11 +182,11 @@ class covariance_matrix_handling:
             covariance_column = covariance
             covariance_column_inverse_F_upd = la.inv(covariance_column)
 
-            # Column Stacking covariance Matrix -- Update of G
+            # Row Stacking covariance Matrix -- Update of G
             covariance_row = np.zeros(covariance_column.shape)
             indI = np.empty(0, dtype='int')
-            for l in range(n_samples):
-                indI = np.append(indI, np.arange(0+l, (n_samples*m_species)+l, n_samples))
+            for l in range(n_numrows):
+                indI = np.append(indI, np.arange(0+l, (n_numrows*m_numcols)+l, n_numrows))
 
             indJ = indI
             for a, i in enumerate(indI):
@@ -217,7 +201,7 @@ class covariance_matrix_handling:
         return covariance_column_inverse_F_upd, covariance_row_inverse_G_upd
 
     ## Splitting the covariance Matrix ======================== ##
-    def split_covariance_inverse(covariance, n_samples, m_species, option = ("row_stacked", "column_stacked")):
+    def split_covariance_inverse(covariance, n_numrows, m_numcols, option = ("row_stacked", "column_stacked")):
         """This function is used to split the Inverse of the covariance Matrix
         into a plus part and a minus part. Refer to Plis et. al. (2011)[1] for
         more details.
@@ -227,10 +211,10 @@ class covariance_matrix_handling:
         covariance : ndarray
             Size -> nm`x`nm
             covariance Matrix.
-        n_samples : int
-            Number of samples.
-        m_species : int
-            Number of species.
+        n_numrows : int
+            Number of numrows.
+        m_numcols : int
+            Number of numcols.
         option : ('row_stacked', 'column_stacked')
             Option to specify if the covariance matrix is obtained by 
             row-stacking or column stacking the elements of the data matrix (X_matrix)
@@ -258,7 +242,7 @@ class covariance_matrix_handling:
         <https://link.springer.com/article/10.1007/s11265-010-0511-8>
         """
         # Getting the inverse of matrices for the update of F and G
-        S_F_upd, S_G_upd = covariance_matrix_handling.restructure_covariance_inverse(covariance, n_samples, m_species, option=option)
+        S_F_upd, S_G_upd = covariance_matrix_handling.restructure_covariance_inverse(covariance, n_numrows, m_numcols, option=option)
 
         # Generating intermediate blank split matrices for the update of F and G
         SF_INT_plus, SF_INT_minus = np.zeros(S_F_upd.shape), np.zeros(S_F_upd.shape)
@@ -282,7 +266,6 @@ class covariance_matrix_handling:
                     SG_INT_minus[i, j] = np.abs(S_G_upd[i, j])
 
         # Determining the minimum eigen values for minus part of the Matrix.
-        #min_neg_eigen_F_upd = np.abs(np.linalg.eigh(SF_INT_minus)[0]).min()
         SF_minus_eig = np.linalg.eigh(SF_INT_minus)[0]
         SF_plus_eig = np.linalg.eigh(SF_INT_plus)[0]
         SG_minus_eig = np.linalg.eigh(SG_INT_minus)[0]
@@ -325,7 +308,7 @@ class covariance_matrix_handling:
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
-class gnmf_projgrad_with_cov:
+class gnmf_projected_gradient:
     """This class is used to code the proposed Generalised Non-Negative
     Matrix Factorisation with Projected Gradient Approach
 
@@ -550,12 +533,12 @@ class gnmf_projgrad_with_cov:
                        alpha_init_G = 1,
                        alpha_init_F = 1,
                        option = ('row_stacked', 'column_stacked'),
-                       num_factors=None, 
+                       num_fact=None, 
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       convergence_type = ('absolute', 'relative'),
-                       convergence_number = 10):
+                       conv_typ = ('absolute', 'relative'),
+                       conv_num = 10):
         """The function return runs the projected gradient method under consideration.
 
         Parameters
@@ -584,7 +567,7 @@ class gnmf_projgrad_with_cov:
         option : ('row_stacked', 'column_stacked')
             Option to specify if the covariance matrix is obtained by 
             row-stacking or column stacking the elements of the data matrix (X_matrix)
-        num_factors : int
+        num_fact : int
             Total Number of Factors
         num_init : int
             Total Number of initialisations for the dataset under consideration.
@@ -594,11 +577,11 @@ class gnmf_projgrad_with_cov:
         tolerance : float
             Tolerance value below which the method is considered converged. 
             Default = 1e-6
-        convergence_type : option
+        conv_typ : option
             Type of convergence i.e., should the absolute difference or the 
             relative deviation in the objective values to be considered. 
             Default = 'relative'
-        convergence_number : float
+        conv_num : float
             Number of consecutive iteration for which the tolerance criteria 
             should be met. Default = 10
 
@@ -613,41 +596,41 @@ class gnmf_projgrad_with_cov:
 
         """
 
-        n_samples, m_species = X_matrix.shape
-        k_factors = num_factors
-        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init)
+        n_numrows, m_numcols = X_matrix.shape
+        p_numfact = num_fact
+        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_numrows, m_numcols, p_numfact, num_init)
 
         ## Checking inputs -- Convergence
-        if convergence_type == 'relative':
+        if conv_typ == 'relative':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs((OFunc_km1 - OFunc_k)/OFunc_km1)
-        elif convergence_type == 'absolute':
+        elif conv_typ == 'absolute':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs(OFunc_km1 - OFunc_k)
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nSamples: \t\t {0},\nSpecies: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_samples, m_species, k_factors, convergence_type, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
 
         ## Preparing for the run -- Getting the covariance Matrix Sorted
         if option == 'row_stacked':
             covariance_inverse_F_upd, covariance_inverse_G_upd = covariance_matrix_handling.restructure_covariance_inverse(covariance,
-                n_samples = n_samples,
-                m_species = m_species,
+                n_numrows = n_numrows,
+                m_numcols = m_numcols,
                 option = 'row_stacked'
             )
         elif option == 'column_stacked':
             covariance_inverse_F_upd, covariance_inverse_G_upd = covariance_matrix_handling.restructure_covariance_inverse(
                 covariance,
-                n_samples = n_samples,
-                m_species = m_species,
+                n_numrows = n_numrows,
+                m_numcols = m_numcols,
                 option = 'column_stacked'
             )
 
         ## Preparing for run -- Initialising
         obj_func = np.zeros((num_init, max_iter+1))
-        G_mat = np.zeros((num_init, n_samples, k_factors))
-        F_mat = np.zeros((num_init, k_factors, m_species))
+        G_mat = np.zeros((num_init, n_numrows, p_numfact))
+        F_mat = np.zeros((num_init, p_numfact, m_numcols))
 
         for i in range(num_init):
             ## Preparing for run -- Initialising
@@ -658,7 +641,7 @@ class gnmf_projgrad_with_cov:
             G_run = G_init[i]
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
-            obj_func_internal[it] = gnmf_projgrad_with_cov.objective_function(X_matrix, G_run, F_run, covariance_inverse_G_upd, option = option)
+            obj_func_internal[it] = gnmf_projected_gradient.objective_function(X_matrix, G_run, F_run, covariance_inverse_G_upd, option = option)
             pbar = tqdm(total = max_iter)
 
             ## CONSTANT TERMS
@@ -675,24 +658,24 @@ class gnmf_projgrad_with_cov:
                 it = it + 1
 
                 ## Update F Matrix
-                F_upd, _, _ = gnmf_projgrad_with_cov.gnmf_update_F(X_matrix, G_run, F_run, covariance_inverse_F_upd, SX_F_upd, alpha_init=alpha_init_F, beta = beta, sigma = sigma)
+                F_upd, _, _ = gnmf_projected_gradient.gnmf_update_F(X_matrix, G_run, F_run, covariance_inverse_F_upd, SX_F_upd, alpha_init=alpha_init_F, beta = beta, sigma = sigma)
 
                 ## Update G Matrix
-                G_upd, _, ofunc_value_from_G_update = gnmf_projgrad_with_cov.gnmf_update_G(X_matrix, G_run, F_upd, covariance_inverse_G_upd, SX_G_upd, alpha_init=alpha_init_G, beta = beta, sigma = sigma)
+                G_upd, _, ofunc_value_from_G_update = gnmf_projected_gradient.gnmf_update_G(X_matrix, G_run, F_upd, covariance_inverse_G_upd, SX_G_upd, alpha_init=alpha_init_G, beta = beta, sigma = sigma)
 
                 ## Objective Function
                 obj_func_internal[it] = ofunc_value_from_G_update
                 
                 ## Since Objective Function is computed as part for the update 
                 # of G and F Matrices, the step is commented.
-                #gnmf_projgrad_with_cov.objective_function(X_matrix, G_upd, 
+                #gnmf_projected_gradient.objective_function(X_matrix, G_upd, 
                 # F_upd, covariance_inverse_G_upd, option = option)
                 
                 ## Convergence criteria calculation
                 delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+convergence_number] < tolerance) < convergence_number)
+                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
 
                 F_run, G_run = F_upd, G_upd
                 pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
@@ -709,7 +692,7 @@ class gnmf_projgrad_with_cov:
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
-class gnmf_multupd_with_cov:
+class gnmf_multiplicative_update:
     """This class is used to implement GNMF Method with
     multiplicative updates.
 
@@ -780,14 +763,14 @@ class gnmf_multupd_with_cov:
         <https://link.springer.com/article/10.1007/s11265-010-0511-8>
         """
         # Checking the dimension of the problem
-        n_samples, m_species = X_matrix.shape
-        kf, k_factors = G_init.shape
+        n_numrows, m_numcols = X_matrix.shape
+        kf, p_numfact = G_init.shape
         u, kg = F_init.shape
 
-        if (n_samples != kf and m_species != kg and k_factors != u):
+        if (n_numrows != kf and m_numcols != kg and p_numfact != u):
             print('Check the Dimensions')
         else:
-            F_mat = np.kron(np.eye(n_samples), F_init)
+            F_mat = np.kron(np.eye(n_numrows), F_init)
             G_initF_init = (G_init@F_init).flatten()
 
 
@@ -795,7 +778,7 @@ class gnmf_multupd_with_cov:
             G_upd_num = F_mat@(SG_plus_X_vec_G + SG_minus@G_initF_init)
             G_upd_den = F_mat@(SG_minus_X_vec_G + SG_plus@G_initF_init)
 
-            G_upd = np.multiply(G_init, np.divide(G_upd_num, G_upd_den).reshape(n_samples, k_factors))
+            G_upd = np.multiply(G_init, np.divide(G_upd_num, G_upd_den).reshape(n_numrows, p_numfact))
 
         return G_upd
 
@@ -851,14 +834,14 @@ class gnmf_multupd_with_cov:
         """
 
         # Checking the dimension of the problem
-        n_samples, m_species = X_matrix.shape
-        r, k_factors = G_init.shape
-        k_factors, u = F_init.shape
+        n_numrows, m_numcols = X_matrix.shape
+        r, p_numfact = G_init.shape
+        p_numfact, u = F_init.shape
 
-        if (n_samples != r and m_species != u):
+        if (n_numrows != r and m_numcols != u):
             print('Check the Dimensions')
         else:
-            G_mat = np.kron(np.eye(m_species), G_init)
+            G_mat = np.kron(np.eye(m_numcols), G_init)
             G_initF_init = (G_init@F_init).T.flatten()
 
 
@@ -866,7 +849,7 @@ class gnmf_multupd_with_cov:
             F_upd_num = G_mat.T@(SF_plus_X_vec_F + SF_minus@G_initF_init)
             F_upd_den = G_mat.T@(SF_minus_X_vec_F + SF_plus@G_initF_init)
 
-            F_upd = np.multiply(F_init, np.divide(F_upd_num, F_upd_den).reshape(m_species, k_factors).T)
+            F_upd = np.multiply(F_init, np.divide(F_upd_num, F_upd_den).reshape(m_numcols, p_numfact).T)
 
         return F_upd
 
@@ -923,12 +906,12 @@ class gnmf_multupd_with_cov:
                        option = ('row_stacked', 'column_stacked'),
                        G_init = 'random',
                        F_init = 'random', 
-                       num_factors=None, 
+                       num_fact=None, 
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       convergence_type = ('absolute', 'relative'),
-                       convergence_number = 10):
+                       conv_typ = ('absolute', 'relative'),
+                       conv_num = 10):
         """The function return runs the multiplicative method under consideration.
 
         Parameters
@@ -945,7 +928,7 @@ class gnmf_multupd_with_cov:
         F_init : ndarray
             Size -> k`x`m\n
             Initial Source Profile Matrix.
-        num_factors : int
+        num_fact : int
             Total Number of Factors
         num_init : int
             Total Number of initialisations for the dataset under consideration.
@@ -955,11 +938,11 @@ class gnmf_multupd_with_cov:
         tolerance : float
             Tolerance value below which the method is considered converged. 
             Default = 1e-6
-        convergence_type : option
+        conv_typ : option
             Type of convergence i.e., should the absolute difference or the 
             relative deviation in the objective values to be considered. 
             Default = 'relative'
-        convergence_number : float
+        conv_num : float
             Number of consecutive iteration for which the tolerance criteria 
             should be met. Default = 10
 
@@ -979,30 +962,33 @@ class gnmf_multupd_with_cov:
         Function of the problem is changed.
         """
 
-        n_samples, m_species = X_matrix.shape
-        k_factors = num_factors
+        ## Performing checks on initial guess
+        n_numrows, m_numcols = X_matrix.shape
+        p_numfact = num_fact
+        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_numrows, m_numcols, p_numfact, num_init)
 
-        ## Checking inputs -- Convergence
-        if convergence_type == 'relative':
+        ## Checking convergence options
+        if conv_typ == 'relative':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs((OFunc_km1 - OFunc_k)/OFunc_km1)
-        elif convergence_type == 'absolute':
+        elif conv_typ == 'absolute':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs(OFunc_km1 - OFunc_k)
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nSamples: \t\t {0},\nSpecies: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_samples, m_species, k_factors, convergence_type, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
 
-        ## Preparing for the run -- Getting the covariance Matrix Sorted
+        ## Splitting the matrix based on the option provided
         if option == 'row_stacked':
             SF_plus, SF_minus, SG_plus, SG_minus = covariance_matrix_handling.split_covariance_inverse(
                 covariance,
-                n_samples,
-                m_species,
+                n_numrows,
+                m_numcols,
                 option = 'row_stacked'
             )
-            ## Preparing for the run -- Metavariables
+
+            ## Preparing for the run -- Split Matrices
             SF_plus_X_vec_F = SF_plus@X_matrix.T.flatten()
             SF_minus_X_vec_F = SF_minus@X_matrix.T.flatten()
             SG_plus_X_vec_G = SG_plus@X_matrix.flatten()
@@ -1014,11 +1000,12 @@ class gnmf_multupd_with_cov:
         elif option == 'column_stacked':
             SG_plus, SG_minus, SF_plus, SF_minus = covariance_matrix_handling.split_covariance_inverse(
                 covariance,
-                n_samples,
-                m_species,
+                n_numrows,
+                m_numcols,
                 option = 'column_stacked'
             )
-            ## Preparing for the run -- Metavariables
+
+            ## Preparing for the run -- Split Matrices
             SF_plus_X_vec_F = SF_plus@X_matrix.flatten()
             SF_minus_X_vec_F = SF_minus@X_matrix.flatten()
             SG_plus_X_vec_G = SG_plus@X_matrix.T.flatten()
@@ -1028,12 +1015,13 @@ class gnmf_multupd_with_cov:
                 print(np.linalg.norm((SF_plus - SF_minus) - covariance_inverse))
                 raise Exception("The split operation is not performed properly")
         
-        ## Preparing for run -- Initialising
+        ## Preparing for run -- Initialising G, F and Objective Function
         obj_func = np.zeros((num_init, max_iter+1))
-        G_mat = np.zeros((num_init, n_samples, k_factors))
-        F_mat = np.zeros((num_init, k_factors, m_species))
+        G_mat = np.zeros((num_init, n_numrows, p_numfact))
+        F_mat = np.zeros((num_init, p_numfact, m_numcols))
 
         for i in range(num_init):
+
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
             delta = 10*[1] ## Initialising the delta as difference between the objective function values
@@ -1042,32 +1030,35 @@ class gnmf_multupd_with_cov:
             G_run = G_init[i]
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
-            obj_func_internal[it] = gnmf_multupd_with_cov.objective_function(X_matrix, G_run, F_run, covariance_inverse, option = option)
+            obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_run, F_run, covariance_inverse, option = option)
             pbar = tqdm(total = max_iter)
 
             check_convergence = True
 
             while (it < max_iter) and check_convergence:
-                #print((np.sum(np.array(delta[it:it+10]) < tolerance) == convergence_number))
+                #print((np.sum(np.array(delta[it:it+10]) < tolerance) == conv_num))
                 it = it + 1
+
                 ## Update F Matrix
-                F_upd = gnmf_multupd_with_cov.gnmf_update_F(X_matrix, G_run, F_run, SF_plus, SF_minus, SF_plus_X_vec_F, SF_minus_X_vec_F)
+                F_upd = gnmf_multiplicative_update.gnmf_update_F(X_matrix, G_run, F_run, SF_plus, SF_minus, SF_plus_X_vec_F, SF_minus_X_vec_F)
+                
                 ## Update G Matrix
-                G_upd = gnmf_multupd_with_cov.gnmf_update_G(X_matrix, G_run, F_upd, SG_plus, SG_minus, SG_plus_X_vec_G, SG_minus_X_vec_G)
+                G_upd = gnmf_multiplicative_update.gnmf_update_G(X_matrix, G_run, F_upd, SG_plus, SG_minus, SG_plus_X_vec_G, SG_minus_X_vec_G)
+                
                 ## Objective Function
-                obj_func_internal[it] = gnmf_multupd_with_cov.objective_function(X_matrix, G_upd, F_upd, covariance_inverse, option = option)
+                obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd, covariance_inverse, option = option)
 
                 ## Convergence criteria calculation
                 delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+convergence_number] < tolerance) < convergence_number)
+                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
 
                 F_run, G_run = F_upd, G_upd
                 pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
  
-            tqdm.close(pbar)
+            tqdm.close(pbar) # Closing the tqdm bar
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
@@ -1079,7 +1070,7 @@ class gnmf_multupd_with_cov:
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 
-class nmf_multupd:
+class nmf_multiplicative_update:
     """This class is used to implement NNMF Method introduced by Lee and Seung 
     with multiplicative updates.
 
@@ -1133,12 +1124,12 @@ class nmf_multupd:
     def running_method(X_matrix, 
                        G_init = ('random'),
                        F_init = ('random'),
-                       num_factors=None, 
+                       num_fact=None, 
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       convergence_type = ('absolute', 'relative'),
-                       convergence_number = 10):
+                       conv_typ = ('absolute', 'relative'),
+                       conv_num = 10):
         """The function return runs the projected gradient method under consideration.
 
         Parameters
@@ -1152,7 +1143,7 @@ class nmf_multupd:
         F_init : ndarray
             Size -> k`x`m\n
             Initial Source Profile Matrix.
-        num_factors : int
+        num_fact : int
             Total Number of Factors
         num_init : int
             Total Number of initialisations for the dataset under consideration.
@@ -1162,11 +1153,11 @@ class nmf_multupd:
         tolerance : float
             Tolerance value below which the method is considered converged. 
             Default = 1e-6
-        convergence_type : option
+        conv_typ : option
             Type of convergence i.e., should the absolute difference or the 
             relative deviation in the objective values to be considered. 
             Default = 'relative'
-        convergence_number : float
+        conv_num : float
             Number of consecutive iteration for which the tolerance criteria 
             should be met. Default = 10
 
@@ -1180,27 +1171,28 @@ class nmf_multupd:
             Iteration-wise Objective Function value of size num_init`x`max_iter
 
         """
-        print(tolerance)
-        n_samples, m_species = X_matrix.shape
-        k_factors = num_factors
-        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_samples, m_species, k_factors, num_init)
+        
+        ## Performing checks on initial guess
+        n_numrows, m_numcols = X_matrix.shape
+        p_numfact = num_fact
+        G_init, F_init = internal_functions.checking_initial_guess(G_init, F_init, n_numrows, m_numcols, p_numfact, num_init)
 
-        ## Checking inputs -- Convergence
-        if convergence_type == 'relative':
+        ## Checking convergence options
+        if conv_typ == 'relative':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs((OFunc_km1 - OFunc_k)/OFunc_km1)
-        elif convergence_type == 'absolute':
+        elif conv_typ == 'absolute':
             def convergence_checking(OFunc_km1, OFunc_k):
                 return np.abs(OFunc_km1 - OFunc_k)
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nSamples: \t\t {0},\nSpecies: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_samples, m_species, k_factors, convergence_type, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
     
         ## Preparing for run -- Initialising
         obj_func = np.zeros((num_init, max_iter+1))
-        G_mat = np.zeros((num_init, n_samples, k_factors))
-        F_mat = np.zeros((num_init, k_factors, m_species))
+        G_mat = np.zeros((num_init, n_numrows, p_numfact))
+        F_mat = np.zeros((num_init, p_numfact, m_numcols))
 
         for i in range(num_init):
 
@@ -1212,30 +1204,33 @@ class nmf_multupd:
             G_run = G_init[i]
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
-            obj_func_internal[it] = nmf_multupd.objective_function(X_matrix, G_run, F_run)
+            obj_func_internal[it] = nmf_multiplicative_update.objective_function(X_matrix, G_run, F_run)
             pbar = tqdm(total = max_iter)
             check_convergence = True
 
             while (it < max_iter) and check_convergence:
-                #print((np.sum(np.array(delta[it:it+10]) < tolerance) == convergence_number))
                 it = it + 1
+
                 ## Update F Matrix
                 F_upd = np.multiply(F_run, np.divide(G_run.T @ X_matrix, G_run.T @ (G_run @F_run)))
+
                 ## Update G Matrix
                 G_upd = np.multiply(G_run, np.divide(X_matrix @ F_upd.T, (G_run @ F_upd) @ F_upd.T))
+
                 ## Objective Function
-                obj_func_internal[it] = nmf_multupd.objective_function(X_matrix, G_upd, F_upd)
+                obj_func_internal[it] = nmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd)
 
                 ## Convergence criteria calculation
                 delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+convergence_number] < tolerance) < convergence_number)
+                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
 
                 F_run, G_run = F_upd, G_upd
                 pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
 
+            tqdm.close(pbar)
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal

@@ -1,7 +1,8 @@
 import numpy as np
 from scipy import io
-from pyGNMF import gnmf_multupd_with_cov as gmult
-from pyGNMF import gnmf_projgrad_with_cov as gproj
+from pyGNMF import gnmf_multiplicative_update as gmult
+from pyGNMF import nmf_multiplicative_update as mult
+from pyGNMF import gnmf_projected_gradient as gproj
 
 data = io.loadmat("pyGNMF_testDataset.mat")
 X_matrix = data['conc_with_error']
@@ -9,37 +10,44 @@ covariance = data['covariance']
 G_init = data['g_init']
 F_init = data['f_init']
 
-
 GMat, FMat, OFunc = gproj.running_method(
     X_matrix,
     covariance,
-    G_init = G_init,
-    F_init = F_init,
+    G_init = G_init[1],
+    F_init = F_init[1],
     option='row_stacked',
-    num_factors=7,
-    num_init=10,
-    max_iter=1000,
+    num_fact=7,
+    num_init=1,
+    max_iter=10000,
     tolerance=1e-6,
-    convergence_type='relative',
-    convergence_number=10,
+    conv_typ='relative',
+    conv_num=10,
+)
+
+GMat, FMat, OFunc = gmult.running_method(
+    X_matrix,
+    covariance,
+    G_init = G_init[1],
+    F_init = F_init[1],
+    option='row_stacked',
+    num_fact=7,
+    num_init=1,
+    max_iter=10000,
+    tolerance=1e-06,
+    conv_typ='relative',
+    conv_num=10,
 )
 """
 
-GMat, FMat, OFunc = gproj.running_method(
+GMat, FMat, OFunc = mult.running_method(
     X_matrix,
-    covariance,
-    G_init = G_init,
-    F_init = F_init,
-    beta=0.1,
-    sigma=0.0001,
-    alpha_init_G=1,
-    alpha_init_F=1,
-    option='row_stacked',
-    num_factors=7,
+    G_init = G_init[1],
+    F_init = F_init[1],
+    num_fact=7,
     num_init=1,
-    max_iter=500,
-    tolerance=1e-02,
-    convergence_type='relative',
-    convergence_number=10,
+    max_iter=100000,
+    tolerance=1e-6,
+    conv_typ='relative',
+    conv_num=3,
 )
 """
