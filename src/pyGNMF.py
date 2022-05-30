@@ -1,5 +1,5 @@
 try:
-    import cupy as cp
+    import cupy as np
     print("Using CuPy")
 except ImportError as e:
     print ("Using NumPy")
