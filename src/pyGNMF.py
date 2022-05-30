@@ -680,6 +680,7 @@ class gnmf_projected_gradient:
                 
                 ## Convergence criteria calculation
                 conv_criteria = convergence_checking(obj_func_internal[it-1], obj_func_internal[it])
+                #print(conv_criteria)
                 delta.append(conv_criteria < tolerance)
 
                 ## Check for convergence in terms of difference in the objective function
