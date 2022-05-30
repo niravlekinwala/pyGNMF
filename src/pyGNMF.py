@@ -1,4 +1,10 @@
-import numpy as np
+try:
+    import cupy as cp
+    print("Using CuPy")
+except ImportError as e:
+    print ("Using NumPy")
+    import numpy as np
+
 import scipy.linalg as la
 import warnings
 warnings.filterwarnings("error")
@@ -276,7 +282,7 @@ class covariance_matrix_handling:
         min_neg_eigen_F_upd = min(np.append(SF_minus_eig, SF_plus_eig))
         min_neg_eigen_G_upd = min(np.append(SG_minus_eig, SG_plus_eig))
 
-        min_neg_eig = min(min_neg_eigen_F_upd, min_neg_eigen_G_upd)
+        #min_neg_eig = min(min_neg_eigen_F_upd, min_neg_eigen_G_upd)
     
         # Generating final split matrices for the update of F and G
         if min_neg_eigen_F_upd > 0:
@@ -538,7 +544,7 @@ class gnmf_projected_gradient:
                        max_iter = 500000, 
                        tolerance = 1e-6,
                        conv_typ = ('absolute', 'relative'),
-                       conv_num = 10):
+                       conv_num = 3):
         """The function return runs the projected gradient method under consideration.
 
         Parameters
@@ -610,7 +616,7 @@ class gnmf_projected_gradient:
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t less than {4} for {5} iterations,\nMax. Iter: \t\t {6}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, conv_num, max_iter))
 
         ## Preparing for the run -- Getting the covariance Matrix Sorted
         if option == 'row_stacked':
@@ -911,7 +917,7 @@ class gnmf_multiplicative_update:
                        max_iter = 500000, 
                        tolerance = 1e-6,
                        conv_typ = ('absolute', 'relative'),
-                       conv_num = 10):
+                       conv_num = 3):
         """The function return runs the multiplicative method under consideration.
 
         Parameters
@@ -1129,7 +1135,7 @@ class nmf_multiplicative_update:
                        max_iter = 500000, 
                        tolerance = 1e-6,
                        conv_typ = ('absolute', 'relative'),
-                       conv_num = 10):
+                       conv_num = 3):
         """The function return runs the projected gradient method under consideration.
 
         Parameters
