@@ -5,15 +5,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pyGNMF",
-    version="1.0.2",
+    version="1.0.3",
     author=["Nirav Lekinwala","Mani Bhushan"],
     author_email="nirav.lekinwala@gmail.com",
     description="Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/niravl/pyGNMF",
     project_urls={
-        "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
+        "Bug Tracker": "https://github.com/niravl/pyGNMF/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
