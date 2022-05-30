@@ -689,7 +689,7 @@ class gnmf_projected_gradient:
                 
 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(obj_func_internal[it], 6)))
+                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
                 pbar.update(1)
             
             tqdm.close(pbar)
@@ -1077,7 +1077,7 @@ class gnmf_multiplicative_update:
                 
 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(obj_func_internal[it], 6)))
+                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
                 pbar.update(1)
  
             tqdm.close(pbar) # Closing the tqdm bar
@@ -1220,7 +1220,7 @@ class nmf_multiplicative_update:
 
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
-            delta = 10*[1] ## Initialising the delta as difference between the objective function values
+            delta = 10*[False] ## Initialising the delta as difference between the objective function values
             
             ## Starting the run
             G_run = G_init[i]
@@ -1242,14 +1242,25 @@ class nmf_multiplicative_update:
                 ## Objective Function
                 obj_func_internal[it] = nmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd)
 
-                ## Convergence criteria calculation
-                delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
+                # ## Convergence criteria calculation
+                # delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
+
+                # ## Check for convergence in terms of difference in the objective function
+                # check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+
+                # F_run, G_run = F_upd, G_upd
+                # pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
+                                ## Convergence criteria calculation
+                conv_criteria = convergence_checking(obj_func_internal[it-1], obj_func_internal[it])
+                delta.append(conv_criteria < tolerance)
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+                #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
+                check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                
 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
+                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
                 pbar.update(1)
 
             tqdm.close(pbar)
