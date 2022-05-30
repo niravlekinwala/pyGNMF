@@ -63,6 +63,7 @@ class internal_functions:
             4. ``The input matrix is NOT Positive Definite`` : The Matrix is
             Square, Symmetric but NOT Positive Definite.
         """
+        mat = np.array(mat)
         size_1, size_2 = mat.shape
         is_pos_def_key = 0
         if size_1 != size_2:
