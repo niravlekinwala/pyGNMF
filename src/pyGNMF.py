@@ -544,7 +544,7 @@ class gnmf_projected_gradient:
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       conv_typ = ('absolute', 'relative'),
+                       conv_typ = 'relative',
                        conv_num = 3):
         """The function return runs the projected gradient method under consideration.
 
@@ -921,7 +921,7 @@ class gnmf_multiplicative_update:
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       conv_typ = ('absolute', 'relative'),
+                       conv_typ = 'relative',
                        conv_num = 3):
         """The function return runs the multiplicative method under consideration.
 
@@ -1150,7 +1150,7 @@ class nmf_multiplicative_update:
                        num_init = 1, 
                        max_iter = 500000, 
                        tolerance = 1e-6,
-                       conv_typ = ('absolute', 'relative'),
+                       conv_typ = 'relative',
                        conv_num = 3):
         """The function return runs the projected gradient method under consideration.
 

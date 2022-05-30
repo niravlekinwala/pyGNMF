@@ -27,7 +27,7 @@ GMat, FMat, OFunc = gproj.running_method(
     num_init=1,
     max_iter=10000,
     tolerance=1e-6,
-    conv_typ='relative',
+    conv_typ='absolute',
     conv_num=3,
 )
 
