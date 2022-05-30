@@ -62,7 +62,7 @@ class internal_functions:
         if size_1 != size_2:
             raise Exception("C1: The input matrix is not square")
 
-        elif np.sum(mat.T - mat) > 1e-1:
+        elif np.sum(np.abs(mat.T - mat)) > 1e-1:
             print("C2: The covariance Matrix is NOT Symmetric.")
             return is_pos_def_key
 
