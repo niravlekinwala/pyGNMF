@@ -23,7 +23,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
-    Use: `gnmf_multiplicative_updaterunning_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Use: `G_updated, F_updated, objective_function = gnmf_multiplicative_updaterunning_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
     
     where,
     * `X_matrix` (required): Matrix to factorise
@@ -43,7 +43,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
-    Use: `gproj.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Use: `G_updated, F_updated, objective_function = gproj.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
 
     where,
     * `X_matrix` (required): Matrix to factorise
@@ -62,7 +62,7 @@ Following are some class as part of the module.
     * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
     * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence. `conv_num` parameter is used to declare convergence only if the `absolute` or `relative` difference is less than tolerance value for some iterations. Default value is 3.
 
-3. `nmf_multiplicative_update`: There are two functions as part of the class,
+3. `G_updated, F_updated, objective_function = nmf_multiplicative_update`: There are two functions as part of the class,
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
