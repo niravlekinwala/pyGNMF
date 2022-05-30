@@ -1,4 +1,10 @@
-import numpy as np
+try:
+    import cupy as np
+    print("Using CuPy")
+except ImportError as e:
+    import numpy as np
+    print("Using NumPy")
+
 from scipy import io
 from pyGNMF import gnmf_multiplicative_update as gmult
 from pyGNMF import nmf_multiplicative_update as mult

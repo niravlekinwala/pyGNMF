@@ -168,7 +168,7 @@ class covariance_matrix_handling:
         if option == 'row_stacked':
             # Row Stacked covariance Matrix -- Update of G
             covariance_row = covariance
-            covariance_row_inverse_G_upd = la.inv(covariance_row)
+            covariance_row_inverse_G_upd = np.array(la.inv(covariance_row))
 
             # Column Stacking covariance Matrix -- Update of F
             covariance_column = np.zeros(covariance_row.shape)
@@ -181,12 +181,12 @@ class covariance_matrix_handling:
                 for b, j in enumerate(indJ):
                     covariance_column[a, b] = covariance_row[i, j]
 
-            covariance_column_inverse_F_upd = la.inv(covariance_column)
+            covariance_column_inverse_F_upd = np.array(la.inv(covariance_column))
 
         elif option == 'column_stacked':
             # Column Stacked covariance Matrix -- Update of F
             covariance_column = covariance
-            covariance_column_inverse_F_upd = la.inv(covariance_column)
+            covariance_column_inverse_F_upd = np.array(la.inv(covariance_column))
 
             # Row Stacking covariance Matrix -- Update of G
             covariance_row = np.zeros(covariance_column.shape)
@@ -199,7 +199,7 @@ class covariance_matrix_handling:
                 for b, j in enumerate(indJ):
                     covariance_row[a, b] = covariance_column[i, j]
 
-            covariance_row_inverse_G_upd = la.inv(covariance_row)
+            covariance_row_inverse_G_upd = np.array(la.inv(covariance_row))
         
         else:
             raise Exception('Please mention if the covariance matrix is obtained by ``row_stacked`` the elements of X matrix or ``column_stacked`` the elements of X matrix.')
@@ -999,7 +999,7 @@ class gnmf_multiplicative_update:
             SF_minus_X_vec_F = SF_minus@X_matrix.T.flatten()
             SG_plus_X_vec_G = SG_plus@X_matrix.flatten()
             SG_minus_X_vec_G = SG_minus@X_matrix.flatten()
-            covariance_inverse = la.inv(covariance)
+            covariance_inverse = np.array(la.inv(covariance))
             if np.linalg.norm((SG_plus - SG_minus) - covariance_inverse) > 1e-3:
                 print(np.linalg.norm((SG_plus - SG_minus) - covariance_inverse))
                 raise Exception("The split operation is not performed properly")
@@ -1016,7 +1016,7 @@ class gnmf_multiplicative_update:
             SF_minus_X_vec_F = SF_minus@X_matrix.flatten()
             SG_plus_X_vec_G = SG_plus@X_matrix.T.flatten()
             SG_minus_X_vec_G = SG_minus@X_matrix.T.flatten()
-            covariance_inverse = la.inv(covariance)
+            covariance_inverse = np.array(la.inv(covariance))
             if np.linalg.norm((SF_plus - SF_minus) - covariance_inverse) > 1e-3:
                 print(np.linalg.norm((SF_plus - SF_minus) - covariance_inverse))
                 raise Exception("The split operation is not performed properly")
