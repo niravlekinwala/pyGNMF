@@ -688,7 +688,7 @@ class gnmf_projected_gradient:
                 check_convergence =  sum(delta[it:it+conv_num]) < conv_num
                 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}, α_G: {},α_F: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6), "{:e}".format(alphaG), "{:e}".format(alphaF)))
+                pbar.set_description("δ: {}, J: {}, α_G: {}, α_F: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6), "{:e}".format(alphaG), "{:e}".format(alphaF)))
                 pbar.update(1)
             
             tqdm.close(pbar)

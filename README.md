@@ -62,5 +62,19 @@ Following are some class as part of the module.
     * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
     * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence. `conv_num` parameter is used to declare convergence only if the `absolute` or `relative` difference is less than tolerance value for some iterations. Default value is 3.
 
-3. `nmf_multiplicative_update`:
+3. `nmf_multiplicative_update`: There are two functions as part of the class,
+    - `objective_function` : This function is used to compute the value of objective function
+    - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
+    Use `nmf_multiplicative_update.running_method(X_matrix, G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ='relative', conv_num=3)`
+    
+    where,
+    * `X_matrix` (required): Matrix to factorise
+    * `G_init='random'` (required): Non-negative Initial guess for $G$ of size $n\times p$. If `random` keyword is used, `G_init` is generated randomly internally. 
+    * `F_init='random'` (required): Non-negative Initial guess for $F$ of size $p\times m$. If `random` keyword is used, `F_init` is generated randomly internally. 
+    * `num_fact=None` ($p$, required): A critical parameter for the GNMF to work i.e., the number of factors for $X$ matrix. 
+    * `num_init=1` (optional): Each method can be initialised multiple times depending on this parameter. Default value is 1.
+    * `max_iter=500000` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations defined by this parameters. Default value is 500000.
+    * `tolerance=1e-06` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations. This parameter defines the tolerance value for the convergence.
+    * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
+    * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence. `conv_num` parameter is used to declare convergence only if the `absolute` or `relative` difference is less than tolerance value for some iterations. Default value is 3.
