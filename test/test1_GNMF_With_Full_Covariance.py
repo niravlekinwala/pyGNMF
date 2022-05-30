@@ -15,7 +15,7 @@ X_matrix = np.array(data['conc_with_error'])
 covariance = np.array(data['covariance'])
 G_init = np.array(data['g_init'])
 F_init = np.array(data['f_init'])
-
+"""
 GMat, FMat, OFunc = gproj.running_method(
     X_matrix,
     covariance,
@@ -24,12 +24,13 @@ GMat, FMat, OFunc = gproj.running_method(
     option='row_stacked',
     num_fact=7,
     num_init=1,
-    max_iter=10000,
+    max_iter=100,
     tolerance=1e-6,
     conv_typ='relative',
     conv_num=10,
 )
 
+"""
 GMat, FMat, OFunc = gmult.running_method(
     X_matrix,
     covariance,
@@ -39,7 +40,7 @@ GMat, FMat, OFunc = gmult.running_method(
     num_fact=7,
     num_init=1,
     max_iter=10000,
-    tolerance=1e-06,
+    tolerance=1e-04,
     conv_typ='relative',
     conv_num=10,
 )

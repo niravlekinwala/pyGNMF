@@ -642,7 +642,7 @@ class gnmf_projected_gradient:
         for i in range(num_init):
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
-            delta = 10*[1] ## Initialising the delta as difference between the objective function values
+            delta = 10*[False] ## Initialising the delta as difference between the objective function values
 
             ## Starting the run
             G_run = G_init[i]
@@ -679,13 +679,16 @@ class gnmf_projected_gradient:
                 # F_upd, covariance_inverse_G_upd, option = option)
                 
                 ## Convergence criteria calculation
-                delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
+                conv_criteria = convergence_checking(obj_func_internal[it-1], obj_func_internal[it])
+                delta.append(conv_criteria < tolerance)
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+                #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
+                check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                
 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
+                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
             
             tqdm.close(pbar)
@@ -984,7 +987,7 @@ class gnmf_multiplicative_update:
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t less than {4} for {5} iterations,\nMax. Iter: \t\t {6}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, conv_num, max_iter))
 
         ## Splitting the matrix based on the option provided
         if option == 'row_stacked':
@@ -1031,7 +1034,7 @@ class gnmf_multiplicative_update:
 
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
-            delta = 10*[1] ## Initialising the delta as difference between the objective function values
+            delta = 10*[False] ## Initialising the delta as difference between the objective function values
             
             ## Starting the run
             G_run = G_init[i]
@@ -1055,14 +1058,25 @@ class gnmf_multiplicative_update:
                 ## Objective Function
                 obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd, covariance_inverse, option = option)
 
+                # ## Convergence criteria calculation
+                # delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
+
+                # ## Check for convergence in terms of difference in the objective function
+                # check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+
+                # F_run, G_run = F_upd, G_upd
+                # pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                 ## Convergence criteria calculation
-                delta.append(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
+                conv_criteria = convergence_checking(obj_func_internal[it-1], obj_func_internal[it])
+                delta.append(conv_criteria < tolerance)
 
                 ## Check for convergence in terms of difference in the objective function
-                check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+                #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
+                check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                
 
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
+                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(obj_func_internal[it], 6)))
                 pbar.update(1)
  
             tqdm.close(pbar) # Closing the tqdm bar
@@ -1194,7 +1208,7 @@ class nmf_multiplicative_update:
         else:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
-        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t {4},\nMax. Iter: \t\t {5}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, max_iter))
+        print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t less than {4} for {5} iterations,\nMax. Iter: \t\t {6}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, conv_num, max_iter))
     
         ## Preparing for run -- Initialising
         obj_func = np.zeros((num_init, max_iter+1))
