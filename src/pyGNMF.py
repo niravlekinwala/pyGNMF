@@ -665,10 +665,10 @@ class gnmf_projected_gradient:
                 it = it + 1
 
                 ## Update F Matrix
-                F_upd, _, _ = gnmf_projected_gradient.gnmf_update_F(X_matrix, G_run, F_run, covariance_inverse_F_upd, SX_F_upd, alpha_init=alpha_init_F, beta = beta, sigma = sigma)
+                F_upd, alphaF, _ = gnmf_projected_gradient.gnmf_update_F(X_matrix, G_run, F_run, covariance_inverse_F_upd, SX_F_upd, alpha_init=alpha_init_F, beta = beta, sigma = sigma)
 
                 ## Update G Matrix
-                G_upd, _, ofunc_value_from_G_update = gnmf_projected_gradient.gnmf_update_G(X_matrix, G_run, F_upd, covariance_inverse_G_upd, SX_G_upd, alpha_init=alpha_init_G, beta = beta, sigma = sigma)
+                G_upd, alphaG, ofunc_value_from_G_update = gnmf_projected_gradient.gnmf_update_G(X_matrix, G_run, F_upd, covariance_inverse_G_upd, SX_G_upd, alpha_init=alpha_init_G, beta = beta, sigma = sigma)
 
                 ## Objective Function
                 obj_func_internal[it] = ofunc_value_from_G_update
@@ -687,9 +687,8 @@ class gnmf_projected_gradient:
                 #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
                 check_convergence =  sum(delta[it:it+conv_num]) < conv_num
                 
-
                 F_run, G_run = F_upd, G_upd
-                pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
+                pbar.set_description("δ: {}, J: {}, α_G: {},α_F: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6), "{:e}".format(alphaG), "{:e}".format(alphaF)))
                 pbar.update(1)
             
             tqdm.close(pbar)
