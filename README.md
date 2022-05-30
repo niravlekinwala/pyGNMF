@@ -25,8 +25,10 @@ Following are some class as part of the module.
     - `update_G` : This function is used for the update of G.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
-    
-    `running_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3,)`
+
+    Use: `gnmf_multiplicative_updaterunning_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3,)`
+    where,
+    * `X_matrix`: Matrix to factorise
 2. `gnmf_projected_gradient`:
 3. `nmf_multiplicative_update`:
 
