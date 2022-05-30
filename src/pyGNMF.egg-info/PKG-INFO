@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyGNMF
-Version: 1.0.3
+Version: 1.0.4
 Summary: Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.
 Home-page: https://github.com/niravl/pyGNMF
 Author: ['Nirav Lekinwala', 'Mani Bhushan']
@@ -13,22 +13,22 @@ Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-# pyGNMF
- Python Library for Generalised Non-Negative Matrix Factorisiation (GNMF)
+# `pyGNMF`
+ Python Library for Generalised Non-Negative Matrix Factorisation (GNMF)
 
-This Python library implements GNMF method introduced in article titled "Generalised Non-Negative Matrix Factorisation for Air Pollution Source Apportionment" published in the Science of Total Environment Journal.
+A Python implementation of GNMF method introduced in article by [Lekinwala and Bhushan](#1) in an article "Generalised Non-Negative Matrix Factorisation for Air Pollution Source Apportionment".
 
-Please refer to the article in SoftwareX for more details. 
+Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for more details. 
 
 ## Some Features
 Uses NumPy (or CuPy, if the package is installed) to factorise a matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$. Depending on the choice of the Covariance matrix, the GNMF will result in one of the following methods,
 
 ### Covariance Matrix
 The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures element-wise covariance information. Depending on the type of covariance, GNMF method can act as different methods in the literature,
-1. **Covariance Matrix as Identity**: In this case, GNMF method with multiplicative update is same as Lee and Seung's NMF method with multiplicative update. Projected gradient updates can also be used.
-2. **Covariance Matrix is Diagonal Matrix**: In this case, GNMF method with multiplicative update is same as LS-NMF method discussed by Wang. Projected gradient updates can also be used.
-3. **Covariance Matrix with elements correlated along rows or columns**: In this case, GNMF method with multiplicative update is same as glsNMF method discussed by Plis. Projected gradient updates can also be used.
-4. **Covariance Matrix is Dense Matrix**: In this case, the GNMF Method with multiplicative and projected gradient method is as discussed in Lekinwala and Bhushan (2022).
+1. **Covariance Matrix as Identity**: In this case, GNMF method with multiplicative update is same as NMF method proposed by [Lee and Seung, 1999](#3).
+2. **Covariance Matrix is Diagonal Matrix**: In this case, GNMF method with multiplicative update is same as LS-NMF method ([Wang et. al., 2006](#4)).
+3. **Covariance Matrix with elements correlated along rows or columns**: In this case, GNMF method with multiplicative update is same as glsNMF method ([Plis et. al. 2011](#5)).
+4. **Covariance Matrix is Dense Matrix**: [Lekinwala and Bhushan, 2022](#1) proposes the GNMF method with multiplicative and projected gradient updates.
 
 ## Functions in `pyGNMF`
 Following are some class as part of the module.
@@ -93,3 +93,27 @@ Following are some class as part of the module.
     * `tolerance=1e-06` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations. This parameter defines the tolerance value for the convergence.
     * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
     * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence. `conv_num` parameter is used to declare convergence only if the `absolute` or `relative` difference is less than tolerance value for some iterations. Default value is 3.
+## References
+<a id="1">[1]</a> Nirav L. Lekinwala and Mani Bhushan,
+**Generalised non-negative matrix factorisation for air pollution source apportionment**
+Science of The Total Environment (2022), 156294, ISSN 0048-9697,
+[https://doi.org/10.1016/j.scitotenv.2022.156294.](https://www.sciencedirect.com/science/article/pii/S0048969722033915)
+
+<a id="1">[2]</a> Nirav L. Lekinwala and Mani Bhushan,
+**`pyGNMF`: A python library for implementation of generalised non-negative matrix factorisation method**
+SoftwareX, 2022, _(Submitted)_
+
+<a id="1">[3]</a> Lee, D. and Seung, H. 
+**Learning the parts of objects by non-negative matrix factorization**
+Nature (1999), 401(6755):788–791.
+[https://doi.org/10.1038/44565](https://www.nature.com/articles/44565)
+
+<a id="1">[4]</a> Wang, G., Kossenkov, A. V., and Ochs, M. F.
+**LS-NMF: A modified non-negative matrix factorization algorithm utilizing uncertainty estimates.**
+BMC Bioinformatics (2006), 7(1):175.
+[https://doi.org/10.1186/1471-2105-7-175](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-175)
+
+<a id="1">[5]</a> Plis, S.M., Potluru, V.K., Lane, T. et al. 
+**Correlated Noise: How it Breaks NMF, and What to Do About it** 
+J Sign Process Syst. (2011), 65, 351–359. 
+[https://doi.org/10.1007/s11265-010-0511-8](https://link.springer.com/article/10.1007/s11265-010-0511-8)
