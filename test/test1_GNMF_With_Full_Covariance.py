@@ -11,10 +11,10 @@ from pyGNMF import nmf_multiplicative_update as mult
 from pyGNMF import gnmf_projected_gradient as gproj
 
 data = io.loadmat("pyGNMF_testDataset.mat")
-X_matrix = data['conc_with_error']
-covariance = data['covariance']
-G_init = data['g_init']
-F_init = data['f_init']
+X_matrix = np.array(data['conc_with_error'])
+covariance = np.array(data['covariance'])
+G_init = np.array(data['g_init'])
+F_init = np.array(data['f_init'])
 
 GMat, FMat, OFunc = gproj.running_method(
     X_matrix,
