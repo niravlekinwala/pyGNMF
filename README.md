@@ -28,7 +28,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function after each iteration.
     - `running_method` : This function is used to run the GNMF method with multiplicative update. A user can call the function in the following way and pass required inputs. Following are the details about the inputs,
 
-    Usege: `G_updated, F_updated, objective_function = pyGNMF.gnmf_multiplicative_update.running_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Usage: `G_updated, F_updated, objective_function = pyGNMF.gnmf_multiplicative_update.running_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
     
     where,
     * `X_matrix` (required): Matrix to factorise.
@@ -48,7 +48,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
-    Use: `G_updated, F_updated, objective_function = gnmf_projected_gradient.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Usage: `G_updated, F_updated, objective_function = gnmf_projected_gradient.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
 
     where,
     * `X_matrix` (required): Matrix to factorise
@@ -71,7 +71,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
-    Use `nmf_multiplicative_update.running_method(X_matrix, G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ='relative', conv_num=3)`
+    Usage: `nmf_multiplicative_update.running_method(X_matrix, G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ='relative', conv_num=3)`
     
     where,
     * `X_matrix` (required): Matrix to factorise
