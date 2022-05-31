@@ -11,7 +11,7 @@ Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for
 3. Working on getting the package on [pypi](pypi.org)
 
 ## Details
-GNMF factorises matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$ matrices by incorporating element-wise ovariance matrix in the objective function and a user-defined number of factors ($p$).
+GNMF factorises matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$ matrices by incorporating element-wise covariance matrix in the objective function and a user-defined number of factors ($p$).
 
 ### Covariance Matrix
 The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures element-wise covariance information. Depending on the type of covariance, GNMF method can act as different methods in the literature,
