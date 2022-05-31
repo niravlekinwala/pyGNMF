@@ -8,7 +8,7 @@ Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for
 ## Installation Details
 1. Clone the repository using `git clone https://github.com/niravl/pyGNMF`
 2. Go to the folder and install (preferably in a new environment) using `pip install -e .`
-3. Working on getting the package on [pypy](pypy.org)
+3. Working on getting the package on [pypi](pypi.org)
 
 ## Details
 Uses NumPy (or CuPy, if the package is installed) to factorise a matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$. Depending on the choice of the Covariance matrix, the GNMF will result in one of the following methods,
