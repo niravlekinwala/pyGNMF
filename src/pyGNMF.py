@@ -1,16 +1,4 @@
-
-package = input("Use NumPy [0] or CuPy [1]. Default is NumPy")
-
-if package == 1:
-    try:
-        import cupy as np
-        print("Using CuPy")
-    except ImportError as e:
-        print ("Error importing CuPy, using NumPy")
-        import numpy as np
-else:
-    import numpy as np
-
+import numpy as np ## Change 'numpy' with 'cupy' to use GPU
 import warnings
 warnings.filterwarnings("error")
 from tqdm import tqdm
@@ -694,7 +682,7 @@ class gnmf_projected_gradient:
                     
                     F_run, G_run = F_upd, G_upd
 
-                    progress.update(task1, advance = 1, description="[bold red]GNMF Projected Gradient:\nδ: {}, \nJ: {}, \nα_G: {}, \nα_F: {}, \nit:{}/{}".format("{:.2e}".format(conv_criteria), "{:.2e}".format((float(obj_func_internal[it]))), "{:.1e}".format(alphaG), "{:.1e}".format(alphaF), it, max_iter ))
+                    progress.update(task1, advance = 1, description="[bold yellow]GNMF Projected Gradient:\nδ: \t{}, \nJ: \t{}, \nα_G: \t{}, \nα_F: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format((float(obj_func_internal[it]))), "{:.4e}".format(alphaG), "{:.4e}".format(alphaF), it, max_iter ))
             
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
@@ -1072,7 +1060,7 @@ class gnmf_multiplicative_update:
                     
 
                     F_run, G_run = F_upd, G_upd
-                    progress.update(task1, advance = 1, description="[bold green]GNMF Multiplicative Update:\nδ: {}, \nJ: {}, \nit:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
+                    progress.update(task1, advance = 1, description="[bold green]GNMF Multiplicative Update:\nδ: \t{}, \nJ: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format(float(obj_func_internal[it])), it, max_iter))
     
             #tqdm.close(pbar) # Closing the tqdm bar
             G_mat[i, :, :] = G_upd
@@ -1245,7 +1233,7 @@ class nmf_multiplicative_update:
                     check_convergence =  sum(delta[it:it+conv_num]) < conv_num
 
                     F_run, G_run = F_upd, G_upd
-                    progress.update(task1, advance = 1, description="[bold blue]NMF Multiplicative Update:\nδ: {}, \nJ: {}, \nit:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
+                    progress.update(task1, advance = 1, description="[bold blue]NMF Multiplicative Update:\nδ: \t{}, \nJ: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format(float(obj_func_internal[it])), it, max_iter))
 
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
