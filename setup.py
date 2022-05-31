@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pyGNMF",
-    version="1.0.6",
+    version="1.0.7",
     author=["Nirav Lekinwala","Mani Bhushan"],
     author_email="nirav.lekinwala@gmail.com",
     description="Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.",
@@ -21,7 +21,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires = ['numpy',
-                        'tqdm'],
+                        'rich',
+                        'scipy'],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.8",

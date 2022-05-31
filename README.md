@@ -22,18 +22,18 @@ The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures 
 
 ## Functions in `pyGNMF`
 Following are some class as part of the module.
-1. `gnmf_multiplicative_update`: There are four functions as part of the class,
+1. `gnmf_multiplicative_update`: There are four functions as part of this class,
     - `update_F` : This function is used for the update of F.
     - `update_G` : This function is used for the update of G.
-    - `objective_function` : This function is used to compute the value of objective function
-    - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
+    - `objective_function` : This function is used to compute the value of objective function after each iteration.
+    - `running_method` : This function is used to run the GNMF method with multiplicative update. A user can call the function in the following way and pass required inputs. Following are the details about the inputs,
 
-    Use: `G_updated, F_updated, objective_function = gnmf_multiplicative_updaterunning_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Usege: `G_updated, F_updated, objective_function = pyGNMF.gnmf_multiplicative_update.running_method(X_matrix, covariance, option=('row_stacked', 'column_stacked'), G_init='random', F_init='random', num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
     
     where,
-    * `X_matrix` (required): Matrix to factorise
-    * `covariance` (required): Covariance Matrix ($nm\times nm$) for the elements of $X_{n\times m}$ Matrix.
-    * `option=('row_stacked', 'column_stacked')` (required): Option to select if the covariance matrix ($nm\times nm$) elements corresponds to row-stacked elements of $X$ matrix or column-stacked elements of $X$ matrix.   
+    * `X_matrix` (required): Matrix to factorise.
+    * `covariance` (required): Covariance (matrix of size $nm\times nm$) between different the elements of $X_{n\times m}$ Matrix.
+    * `option=('row_stacked', 'column_stacked')` (required): Option to specify how the elements of the covariance matrix ($nm\times nm$) are stacked. If the covariance corresponds to row-stacked elements of $X$ matrix, 'row_stacked' is used else 'column_stacked' is used.  
     * `G_init='random'` (required): Non-negative Initial guess for $G$ of size $n\times p$. If `random` keyword is used, `G_init` is generated randomly internally. 
     * `F_init='random'` (required): Non-negative Initial guess for $F$ of size $p\times m$. If `random` keyword is used, `F_init` is generated randomly internally. 
     * `num_fact=None` ($p$, required): A critical parameter for the GNMF to work i.e., the number of factors for $X$ matrix. 
@@ -48,7 +48,7 @@ Following are some class as part of the module.
     - `objective_function` : This function is used to compute the value of objective function
     - `running_method` : This function is used to run the method under consideration. Following are the inputs required.
 
-    Use: `G_updated, F_updated, objective_function = gproj.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
+    Use: `G_updated, F_updated, objective_function = gnmf_projected_gradient.running_method( X_matrix, covariance, G_init='random', F_init='random', beta=0.1, sigma=0.0001, alpha_init_G=1, alpha_init_F=1, option=('row_stacked', 'column_stacked'), num_fact=None, num_init=1, max_iter=500000, tolerance=1e-06, conv_typ=('absolute', 'relative'), conv_num=3)`
 
     where,
     * `X_matrix` (required): Matrix to factorise

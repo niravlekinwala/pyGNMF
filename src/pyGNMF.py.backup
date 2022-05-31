@@ -282,6 +282,8 @@ class covariance_matrix_handling:
 
         min_neg_eigen_F_upd = min(np.append(SF_minus_eig, SF_plus_eig))
         min_neg_eigen_G_upd = min(np.append(SG_minus_eig, SG_plus_eig))
+
+        #min_neg_eig = min(min_neg_eigen_F_upd, min_neg_eigen_G_upd)
     
         # Generating final split matrices for the update of F and G
         if min_neg_eigen_F_upd > 0:
@@ -647,6 +649,7 @@ class gnmf_projected_gradient:
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
             obj_func_internal[it] = gnmf_projected_gradient.objective_function(X_matrix, G_run, F_run, covariance_inverse_G_upd, option = option)
+            #pbar = tqdm(total = max_iter)
 
             ## CONSTANT TERMS
             Xc = X_matrix.T.flatten()
@@ -687,8 +690,11 @@ class gnmf_projected_gradient:
                     check_convergence =  sum(delta[it:it+conv_num]) < conv_num
                     
                     F_run, G_run = F_upd, G_upd
-
-                    progress.update(task1, advance = 1, description="[bold red]GNMF Projected Gradient:\nδ: {}, \nJ: {}, \nα_G: {}, \nα_F: {}, \nit:{}/{}".format("{:.2e}".format(conv_criteria), "{:.2e}".format((float(obj_func_internal[it]))), "{:.1e}".format(alphaG), "{:.1e}".format(alphaF), it, max_iter ))
+                    # pbar.set_description("δ: {}, J: {}, α_G: {}, α_F: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6), "{:e}".format(alphaG), "{:e}".format(alphaF)))
+                    # pbar.update(1)
+                    progress.update(task1, advance = 1, description="[bold red]δ: {}, J: {}, α_G: {}, α_F: {}, it:{}/{}".format("{:.2e}".format(conv_criteria), "{:.2e}".format((float(obj_func_internal[it]))), "{:.1e}".format(alphaG), "{:.1e}".format(alphaF), it, max_iter ))
+            
+            #tqdm.close(pbar)
             
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
@@ -1039,10 +1045,11 @@ class gnmf_multiplicative_update:
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
             obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_run, F_run, covariance_inverse, option = option)
+            #pbar = tqdm(total = max_iter)
 
             check_convergence = True
             with Progress() as progress:
-                task1 = progress.add_task("[red] GNMF Multiplicative Update", total=max_iter)
+                task1 = progress.add_task("[red] GNMF-MU", total=max_iter)
                 while (it < max_iter) and check_convergence:
                     #print((np.sum(np.array(delta[it:it+10]) < tolerance) == conv_num))
                     it = it + 1
@@ -1056,6 +1063,14 @@ class gnmf_multiplicative_update:
                     ## Objective Function
                     obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd, covariance_inverse, option = option)
 
+                    # ## Convergence criteria calculation
+                    # delta.append(float(convergence_checking(obj_func_internal[it-1], obj_func_internal[it])))
+
+                    # ## Check for convergence in terms of difference in the objective function
+                    # check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+
+                    # F_run, G_run = F_upd, G_upd
+                    # pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
                     ## Convergence criteria calculation
                     conv_criteria = float(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
                     delta.append(conv_criteria < tolerance)
@@ -1066,7 +1081,9 @@ class gnmf_multiplicative_update:
                     
 
                     F_run, G_run = F_upd, G_upd
-                    progress.update(task1, advance = 1, description="[bold green]GNMF Multiplicative Update:\nδ: {}, \nJ: {}, \nit:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
+                    #pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
+                    #pbar.update(1)
+                    progress.update(task1, advance = 1, description="[bold red]δ: {}, J: {}, , it:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
     
             #tqdm.close(pbar) # Closing the tqdm bar
             G_mat[i, :, :] = G_upd
@@ -1215,7 +1232,7 @@ class nmf_multiplicative_update:
             F_run = F_init[i]
             obj_func_internal = np.zeros(max_iter+1)
             obj_func_internal[it] = nmf_multiplicative_update.objective_function(X_matrix, G_run, F_run)
-
+            #pbar = tqdm(total = max_iter)
             check_convergence = True
             with Progress() as progress:
                 task1 = progress.add_task("[red] GNMF-MU", total=max_iter)
@@ -1231,16 +1248,29 @@ class nmf_multiplicative_update:
                     ## Objective Function
                     obj_func_internal[it] = nmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd)
 
-                    ## Convergence criteria calculation
+                    # ## Convergence criteria calculation
+                    # delta.append(float(convergence_checking(obj_func_internal[it-1], obj_func_internal[it])))
+
+                    # ## Check for convergence in terms of difference in the objective function
+                    # check_convergence = (np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num)
+
+                    # F_run, G_run = F_upd, G_upd
+                    # pbar.set_description("δ: {}, J: {}".format(round(delta[-1], 6), round(obj_func_internal[it], 6)))
+                                    ## Convergence criteria calculation
                     conv_criteria = float(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
                     delta.append(conv_criteria < tolerance)
 
                     ## Check for convergence in terms of difference in the objective function
+                    #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
                     check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                    
 
                     F_run, G_run = F_upd, G_upd
-                    progress.update(task1, advance = 1, description="[bold blue]NMF Multiplicative Update:\nδ: {}, \nJ: {}, \nit:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
+                    # pbar.set_description("δ: {}, J: {}".format(round(conv_criteria, 6), round(float(obj_func_internal[it]), 6)))
+                    # pbar.update(1)
+                    progress.update(task1, advance = 1, description="[bold red]δ: {}, J: {}, , it:{}/{}".format("{:.3e}".format(conv_criteria), "{:.3e}".format(float(obj_func_internal[it])), it, max_iter))
 
+            #tqdm.close(pbar)
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
