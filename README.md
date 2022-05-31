@@ -11,7 +11,7 @@ Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for
 3. Working on getting the package on [pypi](pypi.org)
 
 ## Details
-Uses NumPy (or CuPy, if the package is installed) to factorise a matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$. Depending on the choice of the Covariance matrix, the GNMF will result in one of the following methods,
+GNMF factorises matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$ matrices such that $p$ are the user-defined number of factors. depending on the choice of the Covariance matrix, the GNMF will result in one of the following methods,
 
 ### Covariance Matrix
 The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures element-wise covariance information. Depending on the type of covariance, GNMF method can act as different methods in the literature,
