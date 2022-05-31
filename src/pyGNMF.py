@@ -1,13 +1,15 @@
 
 package = input("Use NumPy [0] or CuPy [1]. Default is NumPy")
 
-if package = 1:
+if package == 1:
     try:
         import cupy as np
         print("Using CuPy")
     except ImportError as e:
         print ("Error importing CuPy, using NumPy")
         import numpy as np
+else:
+    import numpy as np
 
 import warnings
 warnings.filterwarnings("error")
