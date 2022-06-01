@@ -104,7 +104,7 @@ class internal_functions:
             Size -> k `x` m
             Initial value for F Matrix.
         """
-        
+
         if type(G_init) == str and type(F_init) == str and G_init.upper() == "RANDOM" and F_init.upper() == "RANDOM":
              ## Initial guesses need to be randomly generated.
             print("{} option is selected for both G_init and F_init. Generating initial guesses randomly".format(G_init.upper()))
@@ -112,15 +112,15 @@ class internal_functions:
             F_init = np.random.rand(num_init, p_numfact, m_numcols)
         else:
             ## CHECKING FOR NEGATIVE VALUES
-            if np.sum(G_init < 0) != 0 and np.sum(F_init < 0) != 0: 
+            if np.sum(G_init < 0) != 0 and np.sum(F_init < 0) != 0:
                 raise ValueError("There are negative values in initial guess. Make sure to initialise with positive values.")
-            
+
             if num_init == 1 and len(G_init.shape) != 3 and len(F_init.shape) != 3:
                 G_init = G_init.reshape(num_init, n_numrows, p_numfact)
                 F_init = F_init.reshape(num_init, p_numfact, m_numcols)
             elif num_init >= 2 and len(G_init.shape) == 3 and len(F_init.shape) == 3 and G_init.shape[0]!=num_init and F_init.shape[0]!=num_init:
                 raise ValueError("Make sure that the size of initial guesses for G and F is sizes {} x {} x {} and {} x {} x {} respectively.".format(num_init, n_numrows, p_numfact, num_init, p_numfact, m_numcols))
-            
+
         return G_init, F_init
 
 class covariance_matrix_handling:
@@ -142,7 +142,7 @@ class covariance_matrix_handling:
         m_numcols : float
             Number of numcols.
         option : ('row_stacked', 'column_stacked')
-            Option to specify if the covariance matrix is obtained by 
+            Option to specify if the covariance matrix is obtained by
             row-stacking or column stacking the elements of the data matrix (X_matrix)
 
         Returns
@@ -156,7 +156,7 @@ class covariance_matrix_handling:
         """
 
         check_positive_Definite = internal_functions.is_pos_def(covariance)
-        
+
         if check_positive_Definite==0:
             raise Exception("Covariance Matrix is not Positive Definite")
 
@@ -170,7 +170,7 @@ class covariance_matrix_handling:
             indI = np.empty(0, dtype='int')
             for l in range(m_numcols):
                 indI = np.append(indI, np.arange(0+l, (n_numrows*m_numcols)+l, m_numcols))
-            
+
             indJ = indI
             for a, i in enumerate(indI):
                 for b, j in enumerate(indJ):
@@ -195,7 +195,7 @@ class covariance_matrix_handling:
                     covariance_row[a, b] = covariance_column[i, j]
 
             covariance_row_inverse_G_upd = np.array(np.linalg.inv(covariance_row))
-        
+
         else:
             raise Exception('Please mention if the covariance matrix is obtained by ``row_stacked`` the elements of X matrix or ``column_stacked`` the elements of X matrix.')
 
@@ -217,7 +217,7 @@ class covariance_matrix_handling:
         m_numcols : int
             Number of numcols.
         option : ('row_stacked', 'column_stacked')
-            Option to specify if the covariance matrix is obtained by 
+            Option to specify if the covariance matrix is obtained by
             row-stacking or column stacking the elements of the data matrix (X_matrix)
 
         Returns
@@ -276,7 +276,7 @@ class covariance_matrix_handling:
 
         min_neg_eigen_F_upd = min(np.append(SF_minus_eig, SF_plus_eig))
         min_neg_eigen_G_upd = min(np.append(SG_minus_eig, SG_plus_eig))
-    
+
         # Generating final split matrices for the update of F and G
         if min_neg_eigen_F_upd > 0:
             min_neg_eigen_F_upd = 0
@@ -295,12 +295,12 @@ class covariance_matrix_handling:
             min_neg_eig = np.abs(min_neg_eigen_G_upd)
             SG_plus = SG_INT_plus + min_neg_eig*np.eye(SG_INT_minus.shape[0])
             SG_minus = SG_INT_minus + min_neg_eig*np.eye(SG_INT_minus.shape[0])
-        
+
         if option == 'row_stacked':
             return SF_plus, SF_minus, SG_plus, SG_minus
         elif option == 'column_stacked':
             return SG_plus, SG_minus, SF_plus, SF_minus
-            
+
     ## ====================================================================== ##
 
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
@@ -335,7 +335,7 @@ class gnmf_projected_gradient:
         around this objective function.
 
     `running_method` : function
-        This function is used to run the GNMF-PG method with 
+        This function is used to run the GNMF-PG method with
     """
 
     ## GNMF Method --> Update of F ========================================== ##
@@ -481,7 +481,7 @@ class gnmf_projected_gradient:
                 obj_fun_newG = 0.5*((Xr_minus_G_kp1_F_mat).T)@covariance_inverse@((Xr_minus_G_kp1_F_mat))
                 it_val = it_val + 1
                 alpha_init = alpha_G
-        
+
             G_vec_upd = G_k - alpha_G*grad_G
             G_vec_upd[G_vec_upd < 0] = 0
             G_upd = G_vec_upd.reshape(n, k)
@@ -523,18 +523,18 @@ class gnmf_projected_gradient:
 
         return obj_func
 
-    def running_method(X_matrix, 
-                       covariance, 
+    def running_method(X_matrix,
+                       covariance,
                        G_init = ('random'),
                        F_init = ('random'),
                        beta = 0.1,
-                       sigma = 0.0001, 
+                       sigma = 0.0001,
                        alpha_init_G = 1,
                        alpha_init_F = 1,
                        option = ('row_stacked', 'column_stacked'),
-                       num_fact=None, 
-                       num_init = 1, 
-                       max_iter = 500000, 
+                       num_fact=None,
+                       num_init = 1,
+                       max_iter = 500000,
                        tolerance = 1e-6,
                        conv_typ = 'relative',
                        conv_num = 3):
@@ -555,16 +555,16 @@ class gnmf_projected_gradient:
             Size -> k`x`m\n
             Initial Source Profile Matrix.
         beta : float
-            Number by which the alpha value reduces when to satisfy the 
+            Number by which the alpha value reduces when to satisfy the
             sufficient decrease condition. Default value = 0.1
         sigma : float
-            Parameter for the sufficient decrease condition. Default Value = 0.0001 
+            Parameter for the sufficient decrease condition. Default Value = 0.0001
         alpha_init_G : float
             Initial value for the step-length for the update of G. Default Value = 1
         alpha_init_F : float
             Initial value for the step-length for the update of F. Default Value = 1
         option : ('row_stacked', 'column_stacked')
-            Option to specify if the covariance matrix is obtained by 
+            Option to specify if the covariance matrix is obtained by
             row-stacking or column stacking the elements of the data matrix (X_matrix)
         num_fact : int
             Total Number of Factors
@@ -574,14 +574,14 @@ class gnmf_projected_gradient:
         max_ter : int
             Total Number of allowable iterations. Default = 500000
         tolerance : float
-            Tolerance value below which the method is considered converged. 
+            Tolerance value below which the method is considered converged.
             Default = 1e-6
         conv_typ : option
-            Type of convergence i.e., should the absolute difference or the 
-            relative deviation in the objective values to be considered. 
+            Type of convergence i.e., should the absolute difference or the
+            relative deviation in the objective values to be considered.
             Default = 'relative'
         conv_num : float
-            Number of consecutive iteration for which the tolerance criteria 
+            Number of consecutive iteration for which the tolerance criteria
             should be met. Default = 10
 
         Returns
@@ -630,7 +630,7 @@ class gnmf_projected_gradient:
         obj_func = np.zeros((num_init, max_iter+1))
         G_mat = np.zeros((num_init, n_numrows, p_numfact))
         F_mat = np.zeros((num_init, p_numfact, m_numcols))
-        
+
         for i in range(num_init):
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
@@ -654,7 +654,7 @@ class gnmf_projected_gradient:
             with Progress() as progress:
                 task1 = progress.add_task("[red] GNMF-MU", total=max_iter)
                 while (it < max_iter) and check_convergence:
-                    
+
                     it = it + 1
 
                     ## Update F Matrix
@@ -665,12 +665,12 @@ class gnmf_projected_gradient:
 
                     ## Objective Function
                     obj_func_internal[it] = ofunc_value_from_G_update
-                    
-                    ## Since Objective Function is computed as part for the update 
+
+                    ## Since Objective Function is computed as part for the update
                     # of G and F Matrices, the step is commented.
-                    #gnmf_projected_gradient.objective_function(X_matrix, G_upd, 
+                    #gnmf_projected_gradient.objective_function(X_matrix, G_upd,
                     # F_upd, covariance_inverse_G_upd, option = option)
-                    
+
                     ## Convergence criteria calculation
                     conv_criteria = float(convergence_checking(obj_func_internal[it-1], obj_func_internal[it]))
                     #print(conv_criteria)
@@ -679,11 +679,11 @@ class gnmf_projected_gradient:
                     ## Check for convergence in terms of difference in the objective function
                     #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
                     check_convergence =  sum(delta[it:it+conv_num]) < conv_num
-                    
+
                     F_run, G_run = F_upd, G_upd
 
                     progress.update(task1, advance = 1, description="[bold yellow]GNMF Projected Gradient:\nδ: \t{}, \nJ: \t{}, \nα_G: \t{}, \nα_F: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format((float(obj_func_internal[it]))), "{:.4e}".format(alphaG), "{:.4e}".format(alphaF), it, max_iter ))
-            
+
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
             obj_func[i, :] = obj_func_internal
@@ -700,8 +700,8 @@ class gnmf_multiplicative_update:
 
     Description
     -----------
-    Generalised Non-Negative Matrix Factorisation (GNMF) is described in this 
-    class.  All the variants of the multiplicative methods including glsNMF with 
+    Generalised Non-Negative Matrix Factorisation (GNMF) is described in this
+    class.  All the variants of the multiplicative methods including glsNMF with
     correlated rows or correlated columns, LS-NMF with diagonal covariance matrix
     and NMF method described by Lee and Seung with diagonal covariance matrix.
 
@@ -719,12 +719,12 @@ class gnmf_multiplicative_update:
 
     """
 
-    def gnmf_update_G(X_matrix, 
-                      G_init, 
-                      F_init, 
-                      SG_plus, 
+    def gnmf_update_G(X_matrix,
+                      G_init,
+                      F_init,
+                      SG_plus,
                       SG_minus,
-                      SG_plus_X_vec_G, 
+                      SG_plus_X_vec_G,
                       SG_minus_X_vec_G):
         """This function is used for the update of `G` Matrix using the
         Multiplicative Method discussed in Plis et. al. (2011).
@@ -784,12 +784,12 @@ class gnmf_multiplicative_update:
 
         return G_upd
 
-    def gnmf_update_F(X_matrix, 
-                      G_init, 
-                      F_init, 
-                      SF_plus, 
-                      SF_minus, 
-                      SF_plus_X_vec_F, 
+    def gnmf_update_F(X_matrix,
+                      G_init,
+                      F_init,
+                      SF_plus,
+                      SF_minus,
+                      SF_plus_X_vec_F,
                       SF_minus_X_vec_F):
         """This function is used for the update of `G` Matrix using the
         Multiplicative Method discussed in Plis et. al. (2011).
@@ -816,10 +816,10 @@ class gnmf_multiplicative_update:
             update of `F` Matrix. Details about how the split is done is given
             in Plis et. al. (2011).
         SF_plus_X_vec_F : ndarray
-            Precomputed the constant matrix obtained by multiplying SF_plus with 
+            Precomputed the constant matrix obtained by multiplying SF_plus with
             appropriate X Matrix.
         SF_minus_X_vec_F : ndarray
-            Precomputed the constant matrix obtained by multiplying SF_minus with 
+            Precomputed the constant matrix obtained by multiplying SF_minus with
             appropriate X Matrix.
         Returns
         -------
@@ -855,10 +855,10 @@ class gnmf_multiplicative_update:
 
         return F_upd
 
-    def objective_function(X_matrix, 
-                           G_upd, 
-                           F_upd, 
-                           covariance_inverse, 
+    def objective_function(X_matrix,
+                           G_upd,
+                           F_upd,
+                           covariance_inverse,
                            option = ('row_stacked', 'column_stacked')):
         """The function return the Objective Function value after the
         update of both `G` and `F` Matrices.
@@ -878,9 +878,9 @@ class gnmf_multiplicative_update:
             Size -> nm`x`nm\n
             covariance Matrix.
         option : ('row_stacked', 'column_stacked')
-            Option to specify if the covariance matrix is obtained by 
+            Option to specify if the covariance matrix is obtained by
             row-stacking or column stacking the elements of the data matrix (X_matrix)
-            
+
 
         Returns
         -------
@@ -903,14 +903,14 @@ class gnmf_multiplicative_update:
         return ofunc_value
 
 
-    def running_method(X_matrix, 
-                       covariance, 
+    def running_method(X_matrix,
+                       covariance,
                        option = ('row_stacked', 'column_stacked'),
                        G_init = 'random',
-                       F_init = 'random', 
-                       num_fact=None, 
-                       num_init = 1, 
-                       max_iter = 500000, 
+                       F_init = 'random',
+                       num_fact=None,
+                       num_init = 1,
+                       max_iter = 500000,
                        tolerance = 1e-6,
                        conv_typ = 'relative',
                        conv_num = 3):
@@ -938,14 +938,14 @@ class gnmf_multiplicative_update:
         max_ter : int
             Total Number of allowable iterations. Default = 500000
         tolerance : float
-            Tolerance value below which the method is considered converged. 
+            Tolerance value below which the method is considered converged.
             Default = 1e-6
         conv_typ : option
-            Type of convergence i.e., should the absolute difference or the 
-            relative deviation in the objective values to be considered. 
+            Type of convergence i.e., should the absolute difference or the
+            relative deviation in the objective values to be considered.
             Default = 'relative'
         conv_num : float
-            Number of consecutive iteration for which the tolerance criteria 
+            Number of consecutive iteration for which the tolerance criteria
             should be met. Default = 10
 
         Returns
@@ -1016,7 +1016,7 @@ class gnmf_multiplicative_update:
             if np.linalg.norm((SF_plus - SF_minus) - covariance_inverse) > 1e-3:
                 print(np.linalg.norm((SF_plus - SF_minus) - covariance_inverse))
                 raise Exception("The split operation is not performed properly")
-        
+
         ## Preparing for run -- Initialising G, F and Objective Function
         obj_func = np.zeros((num_init, max_iter+1))
         G_mat = np.zeros((num_init, n_numrows, p_numfact))
@@ -1027,7 +1027,7 @@ class gnmf_multiplicative_update:
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
             delta = 10*[False] ## Initialising the delta as difference between the objective function values
-            
+
             ## Starting the run
             G_run = G_init[i]
             F_run = F_init[i]
@@ -1043,10 +1043,10 @@ class gnmf_multiplicative_update:
 
                     ## Update F Matrix
                     F_upd = gnmf_multiplicative_update.gnmf_update_F(X_matrix, G_run, F_run, SF_plus, SF_minus, SF_plus_X_vec_F, SF_minus_X_vec_F)
-                    
+
                     ## Update G Matrix
                     G_upd = gnmf_multiplicative_update.gnmf_update_G(X_matrix, G_run, F_upd, SG_plus, SG_minus, SG_plus_X_vec_G, SG_minus_X_vec_G)
-                    
+
                     ## Objective Function
                     obj_func_internal[it] = gnmf_multiplicative_update.objective_function(X_matrix, G_upd, F_upd, covariance_inverse, option = option)
 
@@ -1057,11 +1057,11 @@ class gnmf_multiplicative_update:
                     ## Check for convergence in terms of difference in the objective function
                     #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
                     check_convergence =  sum(delta[it:it+conv_num]) < conv_num
-                    
+
 
                     F_run, G_run = F_upd, G_upd
                     progress.update(task1, advance = 1, description="[bold green]GNMF Multiplicative Update:\nδ: \t{}, \nJ: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format(float(obj_func_internal[it])), it, max_iter))
-    
+
             #tqdm.close(pbar) # Closing the tqdm bar
             G_mat[i, :, :] = G_upd
             F_mat[i, :, :] = F_upd
@@ -1075,7 +1075,7 @@ class gnmf_multiplicative_update:
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
 
 class nmf_multiplicative_update:
-    """This class is used to implement NNMF Method introduced by Lee and Seung 
+    """This class is used to implement NNMF Method introduced by Lee and Seung
     with multiplicative updates.
 
     Description
@@ -1121,16 +1121,16 @@ class nmf_multiplicative_update:
         """
         unit = (X_matrix - G_upd@F_upd)
         ofunc_value = 0.5*np.sum(np.trace(unit.T@unit))
-        
+
         return ofunc_value
 
 
-    def running_method(X_matrix, 
+    def running_method(X_matrix,
                        G_init = ('random'),
                        F_init = ('random'),
-                       num_fact=None, 
-                       num_init = 1, 
-                       max_iter = 500000, 
+                       num_fact=None,
+                       num_init = 1,
+                       max_iter = 500000,
                        tolerance = 1e-6,
                        conv_typ = 'relative',
                        conv_num = 3):
@@ -1155,14 +1155,14 @@ class nmf_multiplicative_update:
         max_ter : int
             Total Number of allowable iterations. Default = 500000
         tolerance : float
-            Tolerance value below which the method is considered converged. 
+            Tolerance value below which the method is considered converged.
             Default = 1e-6
         conv_typ : option
-            Type of convergence i.e., should the absolute difference or the 
-            relative deviation in the objective values to be considered. 
+            Type of convergence i.e., should the absolute difference or the
+            relative deviation in the objective values to be considered.
             Default = 'relative'
         conv_num : float
-            Number of consecutive iteration for which the tolerance criteria 
+            Number of consecutive iteration for which the tolerance criteria
             should be met. Default = 10
 
         Returns
@@ -1175,7 +1175,7 @@ class nmf_multiplicative_update:
             Iteration-wise Objective Function value of size num_init`x`max_iter
 
         """
-        
+
         ## Performing checks on initial guess
         n_numrows, m_numcols = X_matrix.shape
         p_numfact = num_fact
@@ -1192,7 +1192,7 @@ class nmf_multiplicative_update:
             raise Exception("Convergence type required. Choose between 'relative' and 'absolute'.")
 
         print("Following are the Parameters Selected:\n======================================\nnumrows: \t\t {0},\nnumcols: \t\t {1},\nFactors: \t\t {2},\nConv. Type: \t\t {3},\nTolerance: \t\t less than {4} for {5} iterations,\nMax. Iter: \t\t {6}".format(n_numrows, m_numcols, p_numfact, conv_typ, tolerance, conv_num, max_iter))
-    
+
         ## Preparing for run -- Initialising
         obj_func = np.zeros((num_init, max_iter+1))
         G_mat = np.zeros((num_init, n_numrows, p_numfact))
@@ -1203,7 +1203,7 @@ class nmf_multiplicative_update:
             ## Preparing for run -- Initialising
             it = 0 ## Initialising the number of iterations
             delta = 10*[False] ## Initialising the delta as difference between the objective function values
-            
+
             ## Starting the run
             G_run = G_init[i]
             F_run = F_init[i]

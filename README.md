@@ -42,17 +42,17 @@ Following are some class as part of the module.
     conv_num=3)`
     
     where,
-    * `X_matrix` (required): Matrix to factorise.
+    * `X_matrix` (required): Matrix to factorise into `num_fact` factors.
     * `covariance` (required): Covariance (matrix of size $nm\times nm$) between different the elements of $X_{n\times m}$ Matrix.
     * `option=('row_stacked', 'column_stacked')` (required): Option to specify how the elements of the covariance matrix ($nm\times nm$) are stacked. If the covariance corresponds to row-stacked elements of $X$ matrix, 'row_stacked' is used else 'column_stacked' is used.  
-    * `G_init='random'` (required): Non-negative Initial guess for $G$ of size $n\times p$. If `random` keyword is used, `G_init` is generated randomly internally. 
-    * `F_init='random'` (required): Non-negative Initial guess for $F$ of size $p\times m$. If `random` keyword is used, `F_init` is generated randomly internally. 
+    * `G_init='random'` (required): Non-negative initial guess for $G$ of size $n\times p$. If `random` keyword is used, `G_init` is generated randomly internally. 
+    * `F_init='random'` (required): Non-negative initial guess for $F$ of size $p\times m$. If `random` keyword is used, `F_init` is generated randomly internally. 
     * `num_fact=None` ($p$, required): A critical parameter for the GNMF to work i.e., the number of factors for $X$ matrix. 
-    * `num_init=1` (optional): Each method can be initialised multiple times depending on this parameter. Default value is 1.
-    * `max_iter=500000` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations defined by this parameters. Default value is 500000.
-    * `tolerance=1e-06` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations. This parameter defines the tolerance value for the convergence.
-    * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
-    * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence. `conv_num` parameter is used to declare convergence only if the `absolute` or `relative` difference is less than tolerance value for some iterations. Default value is 3.
+    * `num_init=1` (optional): Each method can be initialised multiple times depending on value of this parameter. Default value is 1.
+    * `max_iter=500000` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations defined by value if this parameter. Default value is 500000.
+    * `tolerance=1e-06` (optional): Each initialisation of a method under consideration will run till convergence or till the maximum number of iterations. This parameter defines the tolerance value for the convergence. Default value is 1e-6.
+    * `conv_typ=('absolute', 'relative')` (optional): Each initialisation of a method under consideration will run till convergence or maximum number of iterations. This parameter defines the type of convergence i.e., `absolute` difference in the objective function value or `relative` difference in the objective function value. Default value is `relative`.
+    * `conv_num=3` (optional): Each initialisation of a method under consideration will run till convergence or till maximum number of iterations. Itf a method converges, `conv_num` parameter defines the minimum number of iteration which are required to have convergence criteria below tolerance. Default value is 3.
 2. `gnmf_projected_gradient`: There are four functions as part of the class,
     - `update_F` : This function is used for the update of F.
     - `update_G` : This function is used for the update of G.
@@ -63,10 +63,10 @@ Following are some class as part of the module.
 
     where,
     * `X_matrix` (required): Matrix to factorise
-    * `covariance` (required): Covariance Matrix ($nm\times nm$) for the elements of $X_{n\times m}$ Matrix.
+    * `covariance` (required): Covariance (matrix of size $nm\times nm$) between different the elements of $X_{n\times m}$ Matrix.
     * `G_init='random'` (required): Non-negative Initial guess for $G$ of size $n\times p$. If `random` keyword is used, `G_init` is generated randomly internally. 
     * `F_init='random'` (required): Non-negative Initial guess for $F$ of size $p\times m$. If `random` keyword is used, `F_init` is generated randomly internally. 
-    * `option=('row_stacked', 'column_stacked')` (required): Option to select if the covariance matrix ($nm\times nm$) elements corresponds to row-stacked elements of $X$ matrix or column-stacked elements of $X$ matrix. 
+    * `option=('row_stacked', 'column_stacked')` (required):Option to specify how the elements of the covariance matrix ($nm\times nm$) are stacked. If the covariance corresponds to row-stacked elements of $X$ matrix, 'row_stacked' is used else 'column_stacked' is used.
     * `beta = 0.1` (optional): $\beta$ value used to reduce the value of initial step-length ($\alpha$) while search for $\alpha$ to achieve sufficient decrease. Default value is 0.1.
     * `sigma=0.0001` (optional): User-defined parameter used in sufficient decrease
     * `alpha_init_G=1` : Initial step-length for the update of $G$. Default value is 1.
