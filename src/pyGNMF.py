@@ -60,21 +60,34 @@ class internal_functions:
         mat = np.array(mat)
         size_1, size_2 = mat.shape
         is_pos_def_key = 0
+
+        ## CONDITION NUMBER -- WARNING -- NOT STOP CODE
+        condition_number = np.linalg.cond(mat)
+        if condition_number > 1/np.finfo('float').eps:
+            print("`WARNING`:The condition number of the covariance matrix {}. The results may not be accurate.".format(condition_number, 1/np.finfo('float').eps))
+
+        ## DIFFERNENCE
+        diff = np.linalg.norm(mat@np.linalg.inv(mat) - np.eye(mat.shape[0]), 'fro')
+        print("The Frobenius Norm of the (I - Σ@Σ^(-1)) is: {}".format(diff))
+
+
         if size_1 != size_2:
             raise Exception("C1: The input matrix is not square")
 
-        elif np.sum(np.abs(mat.T - mat)) > 1e-1:
+        elif np.sum(np.linalg.norm((mat.T - mat), 'fro')) > 1e-6:
             print("C2: The covariance Matrix is NOT Symmetric.")
             return is_pos_def_key
 
-        elif np.sum(np.linalg.eigh(mat)[0] > 0) == size_1:
-            print ("C3: The covariance Matrix is Positive Definite")
-            is_pos_def_key = 1
+        elif np.sum(np.linalg.eigh(mat)[0] > 0) < size_1:
+            print ("C3: The covariance Matrix is NOT Positive Definite")
+            is_pos_def_key = 0
             return is_pos_def_key
 
         else:
-            print("C4: The covariance Matrix is NOT Positive Definite")
+            print("C4: The covariance Matrix is Positive Definite")
+            is_pos_def_key = 1
             return is_pos_def_key
+
 
 
     def checking_initial_guess(G_init, F_init, n_numrows, m_numcols, p_numfact, num_init):
@@ -677,8 +690,7 @@ class gnmf_projected_gradient:
                     delta.append(conv_criteria < tolerance)
 
                     ## Check for convergence in terms of difference in the objective function
-                    #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
-                    check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                    check_convergence =  sum(delta[it-conv_num::]) < conv_num
 
                     F_run, G_run = F_upd, G_upd
 
@@ -1055,8 +1067,8 @@ class gnmf_multiplicative_update:
                     delta.append(conv_criteria < tolerance)
 
                     ## Check for convergence in terms of difference in the objective function
-                    #check_convergence = np.sum(np.array(delta)[it:it+conv_num] < tolerance) < conv_num
-                    check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                    check_convergence =  sum(delta[it-conv_num::]) < conv_num
+
 
 
                     F_run, G_run = F_upd, G_upd
@@ -1230,7 +1242,8 @@ class nmf_multiplicative_update:
                     delta.append(conv_criteria < tolerance)
 
                     ## Check for convergence in terms of difference in the objective function
-                    check_convergence =  sum(delta[it:it+conv_num]) < conv_num
+                    check_convergence =  sum(delta[it-conv_num::]) < conv_num
+
 
                     F_run, G_run = F_upd, G_upd
                     progress.update(task1, advance = 1, description="[bold blue]NMF Multiplicative Update:\nδ: \t{}, \nJ: \t{}, \nit: \t{}/{}".format("{:.4e}".format(conv_criteria), "{:.4e}".format(float(obj_func_internal[it])), it, max_iter))
