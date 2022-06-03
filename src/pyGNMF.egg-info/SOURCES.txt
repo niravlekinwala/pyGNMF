@@ -7,5 +7,5 @@ src/pyGNMF.egg-info/SOURCES.txt
 src/pyGNMF.egg-info/dependency_links.txt
 src/pyGNMF.egg-info/requires.txt
 src/pyGNMF.egg-info/top_level.txt
-test/test.py
-test/test1_GNMF_With_Full_Covariance.py
+test/test_data_generation.py
+test/test_running_method.py
