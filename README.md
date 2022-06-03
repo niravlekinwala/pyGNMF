@@ -21,7 +21,7 @@ The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures 
 4. **Covariance Matrix is Dense Matrix**: [Lekinwala and Bhushan, 2022](#1) proposes the GNMF method with multiplicative and projected gradient updates.
 
 ## Package Structure of `pyGNMF`
-![plot](images/pyGNMF_package_structure.pdf)
+![plot](images/pyGNMF_package_structure_image.png)
 
 ## Functions in `pyGNMF`
 Following are some class as part of the module.
