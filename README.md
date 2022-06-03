@@ -3,7 +3,7 @@
 
 A Python implementation of GNMF method introduced in article by [Lekinwala and Bhushan](#1) in an article "Generalised Non-Negative Matrix Factorisation for Air Pollution Source Apportionment".
 
-Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for more details. 
+An article describing the library is submitted to SoftwareX ([Lekinwala and Bhushan, 2022](#2)).
 
 ## Installation Details
 1. Clone the repository using `git clone https://github.com/niravl/pyGNMF`
