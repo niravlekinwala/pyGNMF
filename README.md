@@ -20,6 +20,9 @@ The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures 
 3. **Covariance Matrix with elements correlated along rows or columns**: In this case, GNMF method with multiplicative update is same as glsNMF method ([Plis et. al. 2011](#5)).
 4. **Covariance Matrix is Dense Matrix**: [Lekinwala and Bhushan, 2022](#1) proposes the GNMF method with multiplicative and projected gradient updates.
 
+## Schematic of `pyGNMF`
+![plot]()
+
 ## Functions in `pyGNMF`
 Following are some class as part of the module.
 1. `gnmf_multiplicative_update`: There are four functions as part of this class,
