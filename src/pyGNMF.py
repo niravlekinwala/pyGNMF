@@ -168,10 +168,10 @@ class covariance_matrix_handling:
             covariance matrix structured for the update of `G`.
         """
 
-        check_positive_Definite = internal_functions.is_pos_def(covariance)
+        # check_positive_Definite = internal_functions.is_pos_def(covariance)
 
-        if check_positive_Definite==0:
-            raise Exception("Covariance Matrix is not Positive Definite")
+        #if check_positive_Definite==0:
+        #    raise Exception("Covariance Matrix is not Positive Definite")
 
         if option == 'row_stacked':
             # Row Stacked covariance Matrix -- Update of G
@@ -638,6 +638,9 @@ class gnmf_projected_gradient:
                 m_numcols = m_numcols,
                 option = 'column_stacked'
             )
+        #else:
+            #raise ValueError:
+            #continue
 
         ## Preparing for run -- Initialising
         obj_func = np.zeros((num_init, max_iter+1))

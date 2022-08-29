@@ -18,7 +18,7 @@ License-File: LICENSE
 
 A Python implementation of GNMF method introduced in article by [Lekinwala and Bhushan](#1) in an article "Generalised Non-Negative Matrix Factorisation for Air Pollution Source Apportionment".
 
-Please refer to the article in SoftwareX ([Lekinwala and Bhushan, 2022](#2)) for more details. 
+An article describing the library is submitted to SoftwareX ([Lekinwala and Bhushan, 2022](#2)).
 
 ## Installation Details
 1. Clone the repository using `git clone https://github.com/niravl/pyGNMF`
@@ -34,6 +34,9 @@ The covariance matrix ($\Sigma$) should be of size $nm\times nm$ which captures 
 2. **Covariance Matrix is Diagonal Matrix**: In this case, GNMF method with multiplicative update is same as LS-NMF method ([Wang et. al., 2006](#4)).
 3. **Covariance Matrix with elements correlated along rows or columns**: In this case, GNMF method with multiplicative update is same as glsNMF method ([Plis et. al. 2011](#5)).
 4. **Covariance Matrix is Dense Matrix**: [Lekinwala and Bhushan, 2022](#1) proposes the GNMF method with multiplicative and projected gradient updates.
+
+## Package Structure of `pyGNMF`
+![plot](images/pyGNMF_package_structure_image.png)
 
 ## Functions in `pyGNMF`
 Following are some class as part of the module.
