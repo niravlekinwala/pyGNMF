@@ -22,8 +22,11 @@ setuptools.setup(
     ],
     install_requires = ['numpy',
                         'rich',
-                        'scipy'],
+                        'scipy',
+                        'tqdm'],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
+    py_modules = ['pyGNMF'],
+    include_package_data = True,
     python_requires=">=3.8",
 )

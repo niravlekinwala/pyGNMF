@@ -2,6 +2,7 @@ LICENSE
 README.md
 pyproject.toml
 setup.py
+src/pyGNMF.py
 src/pyGNMF.egg-info/PKG-INFO
 src/pyGNMF.egg-info/SOURCES.txt
 src/pyGNMF.egg-info/dependency_links.txt
