@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyGNMF
-Version: 1.0.7
+Version: 1.0.8
 Summary: Python implementation of Generalised Non-negative Matrix Factorisation with Multiplicative and Projected Gradient Approaches.
 Home-page: https://github.com/niravl/pyGNMF
 Author: ['Nirav Lekinwala', 'Mani Bhushan']
@@ -21,10 +21,15 @@ A Python implementation of GNMF method introduced in article by [Lekinwala and B
 An article describing the library is submitted to SoftwareX ([Lekinwala and Bhushan, 2022](#2)).
 
 ## Installation Details
+
+The package can be installed in one of the two following ways,
+
+### Way - 1
 1. Clone the repository using `git clone https://github.com/niravl/pyGNMF`
 2. Go to the folder and install (preferably in a new environment) using `pip install -e .`
-3. Working on getting the package on [pypi](pypi.org)
 
+### Way - 2 
+1. Installing the package from [pypi](pypi.org) using `pip install pyGNMF`
 ## Details
 GNMF factorises matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$ matrices by incorporating element-wise covariance matrix in the objective function and a user-defined number of factors ($p$).
 
