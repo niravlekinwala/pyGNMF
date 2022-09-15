@@ -47,7 +47,6 @@ GMat, FMat, OFunc = nmfmult.running_method(
     X_matrix = X_error,
     G_init = G_init,
     F_init = F_init,
-    option='row_stacked',
     num_fact=num_fact,
     num_init=1,
     max_iter=500000,

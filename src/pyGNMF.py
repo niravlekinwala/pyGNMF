@@ -1,7 +1,6 @@
 import numpy as np ## Change 'numpy' with 'cupy' to use GPU
 import warnings
 warnings.filterwarnings("error")
-from tqdm import tqdm
 from rich.progress import Progress
 
 ##▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
