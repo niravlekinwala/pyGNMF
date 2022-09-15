@@ -15,7 +15,7 @@ An article describing the library is submitted to SoftwareX ([Lekinwala and Bhus
 
 ### Way - 2  -->
 
-`pyGNMF` can be installed from [pypi](pypi.org) using the command `pip install pyGNMF`.
+`pyGNMF` can be installed from [pypi](pypi.org) using the command `pip install pyGNMF`
 ## Details
 GNMF factorises matrix $X_{n\times m}$ into $G_{n\times p}$ and $F_{p\times m}$ matrices by incorporating element-wise covariance matrix in the objective function and a user-defined number of factors ($p$).
 
@@ -106,12 +106,12 @@ Following are some class as part of the module.
 
 
 ## Testing and Use
-Due to size restrictions of the GitHub, dataset used in [Lekinwala and Bhushan, 2022](#2) is not made available, however, a smaller dataset with 20 samples, 6 columns and with 3 underlying factor is included in the `test\` folder.
+Due to size restrictions of the GitHub, dataset used in [Lekinwala and Bhushan (2022)](#2) is not made available, however, a smaller dataset with 20 samples, 6 columns and with 3 underlying factor is included in the `test` folder.
 
 Upon installation, the test files can be downloaded by cloning the git repository using `git clone https://github.com/niravl/pyGNMF`. The test folder contains 3 files, 
 1. `IllustrativeExample.mat`: Test matrix discussed in the article.
 2. `test_data_generation.py`: Python script to generate the `IllustrativeExample.mat` file, changes can be made to change the dimensions of the dataset.
-3. `test_running_method.py`: Python script which uses the `IllustrativeExample.mat` file to test different functions of the script.
+3. `test_running_method.py`: Python script which uses the `IllustrativeExample.mat` file to test different functions of  the `pyGNMF` module. 
 
 ## References
 <a id="1">[1]</a> Nirav L. Lekinwala and Mani Bhushan,
@@ -121,7 +121,8 @@ Science of The Total Environment (2022), 156294, ISSN 0048-9697,
 
 <a id="1">[2]</a> Nirav L. Lekinwala and Mani Bhushan,
 **`pyGNMF`: A python library for implementation of generalised non-negative matrix factorisation method**
-SoftwareX, 2022, _(Submitted)_
+SoftwareX, 2022, _(Submitted)_ 
+[SSRN Preprint Article Available](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4149326)
 
 <a id="1">[3]</a> Lee, D. and Seung, H. 
 **Learning the parts of objects by non-negative matrix factorization**
